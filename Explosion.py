@@ -8,7 +8,6 @@ class Explosion(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         self.explosion = False
         self.start_time = 0
-        
 
     def explode(self):
         self.start_time = pygame.time.get_ticks()

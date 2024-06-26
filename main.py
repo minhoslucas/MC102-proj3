@@ -1,6 +1,7 @@
 import pygame 
 import random
 from sys import exit
+from os import path
 from Obstacles import Wall, UnbreakableWall, Floor
 from Explosion import  Explosion
 from Items import Points, Life, ActiveBomb
@@ -257,8 +258,10 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
+print(path.join('images', 'stone_background.jpg'))
+
 #Coloca o plano de fundo
-background_surface = pygame.image.load('images\stone_background.jpg')
+background_surface = pygame.image.load("images/mario.png").convert()
 
 #Cria um grupo para player
 player = pygame.sprite.GroupSingle()
