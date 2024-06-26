@@ -1,7 +1,8 @@
 import pygame 
 import random
 from sys import exit
-from Obstacles import Wall, UnbreakableWall, Floor, Explosion
+from Obstacles import Wall, UnbreakableWall, Floor
+from Explosion import  Explosion
 from Items import Points, Life, ActiveBomb
 from maze import mazes
 
