@@ -34,3 +34,5 @@ for file in os.scandir(MAZE_FOLDER):
                 mazes[-1][i].append(Tile(True))
             else:
                 mazes[-1][i].append(Wall(False))
+
+    maze.close()

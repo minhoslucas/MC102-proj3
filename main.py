@@ -3,8 +3,8 @@ import random
 from sys import exit
 from os import path
 from Obstacles import Wall, UnbreakableWall, Floor
-from Explosion import  Explosion
-from Items import Points, Life, ActiveBomb
+from Explosion import  Explosion, ActiveBomb
+from Items import Points, Life
 from maze import mazes
 
 class Player(pygame.sprite.Sprite):
@@ -125,7 +125,7 @@ class Player(pygame.sprite.Sprite):
 
         if len(explosions.sprites()) > 0:
             for explosion in explosions.sprites():
-                if self.rect.colliderect(explosion.rect):
+                if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
                     if not self.invincible:
                         self.life -= 1
                         self.activate_timer()
@@ -234,7 +234,7 @@ def explosion_damage():
 def kill_explosion():
     if len(explosions.sprites()) > 0:
         for explosion in explosions.sprites():
-            if not explosion.explosion:
+            if not explosion.explosion_animation:
                 pygame.sprite.Sprite.kill(explosion) 
 
 #Mata a bomba depois que acabar o timer dela
@@ -258,8 +258,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
-print(path.join('images', 'stone_background.jpg'))
-
 #Coloca o plano de fundo
 background_surface = pygame.image.load("images/mario.png").convert()
 
@@ -282,10 +280,11 @@ bombs_item = pygame.sprite.Group()
 #Mapa do labirinto
 map = random.choice(mazes)
 
+floor_coord_list = []
 #Coloca os itens em seus respectivos grupos dependendo do mapa
-for line_index in range(len(map)):
-    for tile_index in range(len(map[line_index])):
-        tile = str(map[line_index][tile_index])
+for line_index, line in enumerate(map):
+    for tile_index, tile in enumerate(line):
+        tile = str(tile)
         coords = ((tile_index*50) + 25, (line_index*50) + 100)
 
         if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
@@ -293,17 +292,21 @@ for line_index in range(len(map)):
 
         elif tile == ' ':
             floors.add(Floor(coords))
+            if coords[0] > 200:
+                floor_coord_list.append((coords, (line_index, tile_index)))
 
         elif tile == '#':
             walls.add(Wall(coords))
 
-        elif tile == 'P':
-            floors.add(Floor(coords))
-            points_item.add(Points(coords))
+points_pos = random.sample(floor_coord_list, 5)
+for pos in points_pos:
+    map[pos[1][0]][pos[1][1]] = 'P'
+    points_item.add(Points(pos[0]))
 
-        elif tile == 'L':
-            floors.add(Floor(coords))
-            lifes_item.add(Life(coords))
+lifes_pos = random.sample(floor_coord_list, 5)
+for pos in lifes_pos:
+    map[pos[1][0]][pos[1][1]] = 'L'
+    lifes_item.add(Life(pos[0]))
 
 
 
