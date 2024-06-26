@@ -10,7 +10,7 @@ from maze import mazes
 class Player(pygame.sprite.Sprite):
     def __init__(self, life = 6, points = 0, coords = (1, 6), bomb_cooldown = 0):
         super().__init__()
-        self.image = pygame.Surface((25,25))
+        self.image = pygame.Surface((15, 15))
         self.image.fill('Red')
         self.rect = self.image.get_rect(center = (75, 375))
         self._life = life
@@ -52,13 +52,13 @@ class Player(pygame.sprite.Sprite):
     def player_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            self.check_wall_colisions(0, -5)
+            self.check_wall_colisions(0, -3)
         if keys[pygame.K_a]:
-            self.check_wall_colisions(-5, 0)
+            self.check_wall_colisions(-3, 0)
         if keys[pygame.K_s]:
-            self.check_wall_colisions(0, 5)
+            self.check_wall_colisions(0, 3)
         if keys[pygame.K_d]:
-            self.check_wall_colisions(5, 0)
+            self.check_wall_colisions(3, 0)
         if keys[pygame.K_SPACE]:
             if self.bomb_cooldown == 0:
                 self.place_bomb()
@@ -106,8 +106,8 @@ class Player(pygame.sprite.Sprite):
     def check_colisions(self):
         for floor in floors.sprites():
             if self.rect.colliderect(floor.rect):
-                x_coords = (floor.rect.centerx - 25)//50
-                y_coords = (floor.rect.centery - 100)//50
+                x_coords = int((floor.rect.centerx - 12.5)//25)
+                y_coords = int((floor.rect.centery - 87.5)//25)
                 self.coords = (x_coords, y_coords)
 
         for item in points_item.sprites():
@@ -132,8 +132,8 @@ class Player(pygame.sprite.Sprite):
 
     #Coloca uma bomba no mapa
     def place_bomb(self):
-        x_coords = (self.coords[0]*50) + 25
-        y_coords = (self.coords[1]*50) + 100
+        x_coords = (self.coords[0]*25) + 12.5
+        y_coords = (self.coords[1]*25) + 87.5
 
         bomb = ActiveBomb((x_coords, y_coords))
         bombs_item.add(bomb)
@@ -214,10 +214,10 @@ def display_game_over():
 #Define a área afetada pela bomba
 def set_explosion(bomb):
     explosions.add(Explosion((bomb.bomb_coords)))
-    explosions.add(Explosion((bomb.bomb_coords[0]+50, bomb.bomb_coords[1])))
-    explosions.add(Explosion((bomb.bomb_coords[0]-50, bomb.bomb_coords[1])))
-    explosions.add(Explosion((bomb.bomb_coords[0], bomb.bomb_coords[1]+50)))
-    explosions.add(Explosion((bomb.bomb_coords[0], bomb.bomb_coords[1]-50)))
+    explosions.add(Explosion((bomb.bomb_coords[0]+25, bomb.bomb_coords[1])))
+    explosions.add(Explosion((bomb.bomb_coords[0]-25, bomb.bomb_coords[1])))
+    explosions.add(Explosion((bomb.bomb_coords[0], bomb.bomb_coords[1]+25)))
+    explosions.add(Explosion((bomb.bomb_coords[0], bomb.bomb_coords[1]-25)))
     for explosion in explosions.sprites():
         explosion.explode()
 
@@ -259,7 +259,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
 #Coloca o plano de fundo
-background_surface = pygame.image.load("images/mario.png").convert()
+background_surface = pygame.image.load(path.join('images', 'stone_background.jpg')).convert()
 
 #Cria um grupo para player
 player = pygame.sprite.GroupSingle()
@@ -285,7 +285,7 @@ floor_coord_list = []
 for line_index, line in enumerate(map):
     for tile_index, tile in enumerate(line):
         tile = str(tile)
-        coords = ((tile_index*50) + 25, (line_index*50) + 100)
+        coords = ((tile_index*25) + 12.5, (line_index*25) + 87.5)
 
         if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
             map_borders.add(UnbreakableWall(coords))

@@ -3,7 +3,7 @@ import pygame
 class Item(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):
         super().__init__()
-        self.image = pygame.Surface((25,25))
+        self.image = pygame.Surface((12.5, 12.5))
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         
 class Points(Item, pygame.sprite.Sprite):
