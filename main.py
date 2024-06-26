@@ -281,7 +281,7 @@ bombs_item = pygame.sprite.Group()
 map = random.choice(mazes)
 
 floor_coord_list = []
-#Coloca os itens em seus respectivos grupos dependendo do mapa
+#Coloca os obstáculos nas suas respectivas posições
 for line_index, line in enumerate(map):
     for tile_index, tile in enumerate(line):
         tile = str(tile)
@@ -298,6 +298,7 @@ for line_index, line in enumerate(map):
         elif tile == '#':
             walls.add(Wall(coords))
 
+#escolhe posições livres do tabuleiro e plota 5 itens points e life
 points_pos = random.sample(floor_coord_list, 5)
 for pos in points_pos:
     map[pos[1][0]][pos[1][1]] = 'P'
@@ -307,8 +308,6 @@ lifes_pos = random.sample(floor_coord_list, 5)
 for pos in lifes_pos:
     map[pos[1][0]][pos[1][1]] = 'L'
     lifes_item.add(Life(pos[0]))
-
-
 
 #Game Loop
 if game_active:
