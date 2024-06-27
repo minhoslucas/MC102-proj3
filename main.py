@@ -51,14 +51,29 @@ class Player(pygame.sprite.Sprite):
     #Checa os inputs do teclado para player
     def player_input(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.check_wall_colisions(0, -3)
-        if keys[pygame.K_a]:
-            self.check_wall_colisions(-3, 0)
-        if keys[pygame.K_s]:
-            self.check_wall_colisions(0, 3)
-        if keys[pygame.K_d]:
-            self.check_wall_colisions(3, 0)
+        norm = 3*((2)**1/2)
+
+        if keys[pygame.K_w] and keys[pygame.K_d]:
+            self.check_wall_colisions(norm, 0)
+            self.check_wall_colisions(0, -norm)
+        elif keys[pygame.K_w] and keys[pygame.K_a]:
+            self.check_wall_colisions(-norm, 0)
+            self.check_wall_colisions(0, -norm)
+        elif keys[pygame.K_s] and keys[pygame.K_d]:
+            self.check_wall_colisions(norm, 0)
+            self.check_wall_colisions(0, norm)
+        elif keys[pygame.K_s] and keys[pygame.K_a]:
+            self.check_wall_colisions(-norm, 0)
+            self.check_wall_colisions(0, norm)
+        else:
+            if keys[pygame.K_w]:
+                self.check_wall_colisions(0, -3)
+            if keys[pygame.K_a]:
+                self.check_wall_colisions(-3, 0)
+            if keys[pygame.K_s]:
+                self.check_wall_colisions(0, 3)
+            if keys[pygame.K_d]:
+                self.check_wall_colisions(3, 0)
         if keys[pygame.K_SPACE]:
             if self.bomb_cooldown == 0:
                 self.place_bomb()
@@ -76,20 +91,19 @@ class Player(pygame.sprite.Sprite):
 
     #Checa as colisões de player com paredes
     def check_wall_colisions(self, dx, dy):
-
         self.rect.x += dx
         self.rect.y += dy
 
         for wall in walls.sprites():
             if self.rect.colliderect(wall.rect):
-                    if dx > 0: 
-                        self.rect.right = wall.rect.left
-                    if dx < 0: 
-                        self.rect.left = wall.rect.right
-                    if dy > 0: 
-                        self.rect.bottom = wall.rect.top
-                    if dy < 0: 
-                        self.rect.top = wall.rect.bottom
+                if dx > 0: 
+                    self.rect.right = wall.rect.left
+                if dx < 0: 
+                    self.rect.left = wall.rect.right
+                if dy > 0: 
+                    self.rect.bottom = wall.rect.top
+                if dy < 0: 
+                    self.rect.top = wall.rect.bottom
 
         for unbreakable_wall in map_borders.sprites():
             if self.rect.colliderect(unbreakable_wall.rect):
