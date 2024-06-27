@@ -6,6 +6,21 @@ from Obstacles import Wall, UnbreakableWall, Floor
 from Explosion import  Explosion, ActiveBomb
 from Items import Points, Life
 from maze import mazes
+from itertools import chain
+
+from professor import Professor
+
+from math import copysign
+
+def pixels_to_coords(xy: tuple[int, int]):
+    x = round((xy[0] - 12.5) // 25)
+    y = round((xy[1] - 87.5) // 25)
+    return x, y
+
+def coords_to_pixels(xy: tuple[int, int]):
+    x = xy[0] * 25 + 12.5
+    y = xy[1] * 25 + 87.5
+    return x, y
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, life = 6, points = 0, coords = (1, 6), bomb_cooldown = 0):
@@ -51,29 +66,24 @@ class Player(pygame.sprite.Sprite):
     #Checa os inputs do teclado para player
     def player_input(self):
         keys = pygame.key.get_pressed()
-        norm = 3*((2)**1/2)
 
-        if keys[pygame.K_w] and keys[pygame.K_d]:
-            self.check_wall_colisions(norm, 0)
-            self.check_wall_colisions(0, -norm)
-        elif keys[pygame.K_w] and keys[pygame.K_a]:
-            self.check_wall_colisions(-norm, 0)
-            self.check_wall_colisions(0, -norm)
-        elif keys[pygame.K_s] and keys[pygame.K_d]:
-            self.check_wall_colisions(norm, 0)
-            self.check_wall_colisions(0, norm)
-        elif keys[pygame.K_s] and keys[pygame.K_a]:
-            self.check_wall_colisions(-norm, 0)
-            self.check_wall_colisions(0, norm)
-        else:
-            if keys[pygame.K_w]:
-                self.check_wall_colisions(0, -3)
-            if keys[pygame.K_a]:
-                self.check_wall_colisions(-3, 0)
-            if keys[pygame.K_s]:
-                self.check_wall_colisions(0, 3)
-            if keys[pygame.K_d]:
-                self.check_wall_colisions(3, 0)
+        vector = pygame.Vector2()
+        vector.xy = 0, 0
+
+        if keys[pygame.K_s]:
+            vector.y += 3
+        if keys[pygame.K_w]:
+            vector.y -= 3
+
+        if keys[pygame.K_d]:
+            vector.x += 3
+        if keys[pygame.K_a]:
+            vector.x -= 3
+
+        if vector.xy != (0, 0):
+            vector = vector.normalize() * 3
+            self.check_wall_colisions(vector)
+
         if keys[pygame.K_SPACE]:
             if self.bomb_cooldown == 0:
                 self.place_bomb()
@@ -90,40 +100,35 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = 1000
 
     #Checa as colisões de player com paredes
-    def check_wall_colisions(self, dx, dy):
-        self.rect.x += dx
-        self.rect.y += dy
+    def check_wall_colisions(self, vector: pygame.Vector2):
+        self._move(vector.x, 0)
+        self._move(vector.y, 1)
 
-        for wall in walls.sprites():
+    def _move(self, movement: int, axis: str):
+        if axis == 0:
+            self.rect.x += movement
+        else:
+            self.rect.y += movement
+
+        for wall in chain(walls.sprites(), map_borders.sprites()):
             if self.rect.colliderect(wall.rect):
-                if dx > 0: 
-                    self.rect.right = wall.rect.left
-                if dx < 0: 
-                    self.rect.left = wall.rect.right
-                if dy > 0: 
-                    self.rect.bottom = wall.rect.top
-                if dy < 0: 
-                    self.rect.top = wall.rect.bottom
+                if axis == 0:
+                    if movement > 0:
+                        self.rect.right = wall.rect.left
+                    else:
+                        self.rect.left = wall.rect.right
+                else:
+                    if movement > 0: 
+                        self.rect.bottom = wall.rect.top
+                    else: 
+                        self.rect.top = wall.rect.bottom
 
-        for unbreakable_wall in map_borders.sprites():
-            if self.rect.colliderect(unbreakable_wall.rect):
-                if dx > 0: 
-                    self.rect.right = unbreakable_wall.rect.left
-                if dx < 0: 
-                    self.rect.left = unbreakable_wall.rect.right
-                if dy > 0: 
-                    self.rect.bottom = unbreakable_wall.rect.top
-                if dy < 0: 
-                    self.rect.top = unbreakable_wall.rect.bottom
+        for floor in floors.sprites():
+            if self.rect.colliderect(floor.rect):
+                self.coords = pixels_to_coords(floor.rect.center)
 
     #Checa por colisões de player com itens ou explosões
     def check_colisions(self):
-        for floor in floors.sprites():
-            if self.rect.colliderect(floor.rect):
-                x_coords = int((floor.rect.centerx - 12.5)//25)
-                y_coords = int((floor.rect.centery - 87.5)//25)
-                self.coords = (x_coords, y_coords)
-
         for item in points_item.sprites():
             if self.rect.colliderect(item.rect):
                 self.points += item._value
@@ -131,19 +136,20 @@ class Player(pygame.sprite.Sprite):
 
         for item in lifes_item.sprites():
             if self.rect.colliderect(item.rect):
-                if self.life == 6:
-                    pygame.sprite.Sprite.kill(item)
-                else:
+                pygame.sprite.Sprite.kill(item)
+
+                if self.life < 6:
                     self.life += item._value
-                    pygame.sprite.Sprite.kill(item)
 
         if len(explosions.sprites()) > 0:
             for explosion in explosions.sprites():
                 if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
-                    if not self.invincible:
-                        self.life -= 1
-                        self.activate_timer()
+                    self.damage()
 
+    def damage(self):
+        if not self.invincible:
+            self.life -= 1
+            self.activate_timer()
     #Coloca uma bomba no mapa
     def place_bomb(self):
         x_coords = (self.coords[0]*25) + 12.5
@@ -290,6 +296,7 @@ points_item = pygame.sprite.Group()
 lifes_item = pygame.sprite.Group()
 bombs_item = pygame.sprite.Group()
 
+professor = Professor(coords_to_pixels((2, 10)), speed=2)
 
 #Mapa do labirinto
 map = random.choice(mazes)
@@ -299,7 +306,7 @@ floor_coord_list = []
 for line_index, line in enumerate(map):
     for tile_index, tile in enumerate(line):
         tile = str(tile)
-        coords = ((tile_index*25) + 12.5, (line_index*25) + 87.5)
+        coords = coords_to_pixels((tile_index, line_index))
 
         if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
             map_borders.add(UnbreakableWall(coords))
@@ -348,6 +355,17 @@ if game_active:
         lifes_item.draw(screen)
         bombs_item.draw(screen)
         explosions.draw(screen)
+
+        professor_group = pygame.sprite.GroupSingle()
+        professor_group.add(professor)
+        professor_group.draw(screen)
+
+        professor.dest = player_class.rect.center
+
+        professor_group.update()
+
+        if professor.rect.colliderect(player_class.rect):
+            player_class.damage()
 
         #Desenham a pontuação, vida, coordenadas, e tempo 
         display_score()
