@@ -21,11 +21,3 @@ class Floor(pygame.sprite.Sprite):
         self.image = pygame.Surface((25, 25))
         self.image.fill('Black')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
-
-
-            
-
-    
-    
-
-        

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from os import path
 import os
 
 @dataclass

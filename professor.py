@@ -1,4 +1,3 @@
-from math import copysign
 import pygame
 
 class Professor(pygame.sprite.Sprite):

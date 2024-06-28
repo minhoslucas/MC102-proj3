@@ -7,10 +7,7 @@ from Explosion import  Explosion, ActiveBomb
 from Items import Points, Life
 from maze import mazes
 from itertools import chain
-
 from professor import Professor
-
-from math import copysign
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -146,6 +143,10 @@ class Player(pygame.sprite.Sprite):
                 if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
                     self.damage()
 
+        if self.rect.colliderect(professor.rect):
+            self.damage()
+
+    #Dá dano em player
     def damage(self):
         if not self.invincible:
             self.life -= 1
@@ -297,6 +298,8 @@ lifes_item = pygame.sprite.Group()
 bombs_item = pygame.sprite.Group()
 
 professor = Professor(coords_to_pixels((2, 10)), speed=2)
+professor_group = pygame.sprite.GroupSingle()
+professor_group.add(professor)
 
 #Mapa do labirinto
 map = random.choice(mazes)
@@ -355,17 +358,11 @@ if game_active:
         lifes_item.draw(screen)
         bombs_item.draw(screen)
         explosions.draw(screen)
-
-        professor_group = pygame.sprite.GroupSingle()
-        professor_group.add(professor)
         professor_group.draw(screen)
 
         professor.dest = player_class.rect.center
 
         professor_group.update()
-
-        if professor.rect.colliderect(player_class.rect):
-            player_class.damage()
 
         #Desenham a pontuação, vida, coordenadas, e tempo 
         display_score()
