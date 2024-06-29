@@ -3,9 +3,9 @@ import random
 from sys import exit
 from os import path
 from Obstacles import Wall, UnbreakableWall, Floor
-from Explosion import  Explosion, ActiveBomb
+from Explosion import  Explosion, Bomb
 from Items import Points, Life
-from maze import mazes
+from maze.reader import mazes
 from itertools import chain
 from professor import Professor
 
@@ -107,7 +107,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.y += movement
 
-        for wall in chain(walls.sprites(), map_borders.sprites()):
+        for wall in chain(walls.sprites(), borders.sprites()):
             if self.rect.colliderect(wall.rect):
                 if axis == 0:
                     if movement > 0:
@@ -156,7 +156,7 @@ class Player(pygame.sprite.Sprite):
         x_coords = (self.coords[0]*25) + 12.5
         y_coords = (self.coords[1]*25) + 87.5
 
-        bomb = ActiveBomb((x_coords, y_coords))
+        bomb = Bomb((x_coords, y_coords))
         bombs_item.add(bomb)
         bomb.activate()
 
@@ -186,26 +186,26 @@ class Player(pygame.sprite.Sprite):
 #Desenha a pontação na tela
 def display_score():
     text_font = pygame.font.Font(None, 30)
-    score_surf = text_font.render(f'Score: {player_class.points}', True, 'White')
+    score_surf = text_font.render(f'Score: {player.points}', True, 'White')
     score_rect = score_surf.get_rect(center = (75, 50))
     screen.blit(score_surf, score_rect)
 
 #Desenha a contagem de vidas na tela
 def display_life_count():
     text_font = pygame.font.Font(None, 30)
-    life_surf = text_font.render(f'Life Count: {player_class.life}', True, 'White')
+    life_surf = text_font.render(f'Life Count: {player.life}', True, 'White')
     life_rect = life_surf.get_rect(center = (275, 50))
     screen.blit(life_surf, life_rect)
 
 def check_life_count():
-    if player_class.life == 0:
+    if player.life == 0:
         return False
     return True
 
 #Desenha as coordenadas na tela
 def display_coords():
     text_font = pygame.font.Font(None, 30)
-    coords_surf = text_font.render(f'Coords: {player_class.coords}', True, 'White')
+    coords_surf = text_font.render(f'Coords: {player.coords}', True, 'White')
     coords_rect = coords_surf.get_rect(center = (475, 50))
     screen.blit(coords_surf, coords_rect)
 
@@ -215,7 +215,7 @@ def display_timer(time_limit = 120):
     real_time = time_limit - pygame.time.get_ticks()//1000
 
     if real_time <= 0:
-        player_class.rect.center = (75, 375)
+        player.rect.center = (75, 375)
         return False
     if real_time%60 < 10:
         timer_surf = text_font.render(f'Time: {real_time//60}:0{real_time%60}', True, 'White')
@@ -263,7 +263,7 @@ def kill_bomb():
     if len(bombs_item.sprites()) > 0:
         bomb = bombs_item.sprites()[0]
         if not bomb.active:
-            player_class.bomb_cooldown = 0
+            player.bomb_cooldown = 0
             set_explosion(bomb)
             pygame.sprite.Sprite.kill(bomb)
 
@@ -283,13 +283,13 @@ pygame.display.set_caption('Os Labirintos da Unicamp')
 background_surface = pygame.image.load(path.join('images', 'stone_background.jpg')).convert()
 
 #Cria um grupo para player
-player = pygame.sprite.GroupSingle()
-player_class = Player()
-player.add(player_class)
+player_group = pygame.sprite.GroupSingle()
+player = Player()
+player_group.add(player)
 
 #Cria um grupo para todos os obtáculos e itens do jogo
 walls = pygame.sprite.Group()
-map_borders = pygame.sprite.Group()
+borders = pygame.sprite.Group()
 floors = pygame.sprite.Group()
 explosions = pygame.sprite.Group()
 
@@ -312,7 +312,7 @@ for line_index, line in enumerate(map):
         coords = coords_to_pixels((tile_index, line_index))
 
         if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
-            map_borders.add(UnbreakableWall(coords))
+            borders.add(UnbreakableWall(coords))
 
         elif tile == ' ':
             floors.add(Floor(coords))
@@ -344,23 +344,23 @@ if game_active:
         #Plota na tela o plano de fundo e player
         screen.blit(background_surface, (0,0))
         screen.fill('Black')   
-        player.draw(screen)
+        player_group.draw(screen)
 
         #Atualiza player e o timer da bomba/explosão
-        player.update()
+        player_group.update()
         bombs_item.update()
         explosions.update()
 
         #Plota as coisas dependendo da matriz
         walls.draw(screen)
-        map_borders.draw(screen)
+        borders.draw(screen)
         points_item.draw(screen)
         lifes_item.draw(screen)
         bombs_item.draw(screen)
         explosions.draw(screen)
         professor_group.draw(screen)
 
-        professor.dest = player_class.rect.center
+        professor.dest = player.rect.center
 
         professor_group.update()
 
