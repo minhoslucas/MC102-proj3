@@ -8,7 +8,7 @@ from Items import Points, Life
 from maze import mazes
 from itertools import chain
 from professor import Professor
-from menus import StartButton, QuitButton
+from menus import Start, Quit, Resume, SaveAndQuit, Save, Restart
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -204,6 +204,13 @@ def check_life_count():
         return False
     return True
 
+def set_wallpaper():
+    wallpaper_surf = pygame.image.load(path.join('images', 'background_tile.png'))
+    for i in range(20):
+        for j in range(16):
+            wallpaper_rect = wallpaper_surf.get_rect(center = (i*50 + 25, j*50 + 25))
+            screen.blit(wallpaper_surf, wallpaper_rect)
+
 #Desenha as coordenadas na tela
 def display_coords():
     text_font = pygame.font.Font(None, 30)
@@ -212,9 +219,9 @@ def display_coords():
     screen.blit(coords_surf, coords_rect)
 
 #Desenha o timer na tela
-def display_timer(time_limit = 120):
+def display_timer(time_limit = 120, start_time = 0):
     text_font = pygame.font.Font(None, 30)
-    real_time = time_limit - pygame.time.get_ticks()//1000
+    real_time = start_time + time_limit - pygame.time.get_ticks()//1000
 
     if real_time <= 0:
         player_class.rect.center = (75, 375)
@@ -233,6 +240,12 @@ def display_game_over():
     game_over_surf = text_font.render('GAME OVER', True, 'White')
     game_over_rect = game_over_surf.get_rect(center = (500, 388))
     screen.blit(game_over_surf, game_over_rect)
+
+def display_title():
+    text_font = pygame.font.Font(None, 100)
+    title_surf = text_font.render('Os Labirintos da Unicamp', True, 'White')
+    title_rect = title_surf.get_rect(center = (500, 188))
+    screen.blit(title_surf, title_rect)
 
 #Define a área afetada pela bomba
 def set_explosion(bomb):
@@ -277,13 +290,13 @@ pygame.init()
 game_active = False
 game_over = False
 main_menu = True
+pause_menu = False
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
 #Coloca o plano de fundo
-background_surface = pygame.image.load(path.join('images', 'stone_background.jpg')).convert()
 
 #Cria um grupo para player
 player = pygame.sprite.GroupSingle()
@@ -305,8 +318,8 @@ professor_group = pygame.sprite.GroupSingle()
 professor_group.add(professor)
 
 buttons = pygame.sprite.Group()
-start_button = StartButton((250, 388))
-quit_button = QuitButton((750, 388))
+start_button = Start((250, 388))
+quit_button = Quit((750, 388))
 buttons.add(quit_button)
 buttons.add(start_button)
 
@@ -345,6 +358,7 @@ for pos in lifes_pos:
 #Game Loop
 while True:
     if game_active:
+        start_time = pygame.time.get_ticks()//1000
         while True:
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
@@ -352,8 +366,7 @@ while True:
                     exit()
 
             #Plota na tela o plano de fundo e player
-            screen.blit(background_surface, (0,0))
-            screen.fill('Black')   
+            set_wallpaper()  
             floors.draw(screen)
 
             #Atualiza player e o timer da bomba/explosão
@@ -375,11 +388,11 @@ while True:
 
             professor_group.update()
 
-            #Desenham a pontuação, vida, coordenadas, e tempo 
+            #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()
             display_life_count()
             display_coords()
-            if not display_timer() or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
+            if not display_timer(start_time=start_time) or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
                 game_over = True
                 game_active = False
                 break
@@ -401,8 +414,7 @@ while True:
                     exit()
 
             #Plota na tela o plano de fundo
-            screen.blit(background_surface, (0,0))
-            screen.fill('Black')
+            set_wallpaper()  
 
             #Desenha a tela de GAME OVER
             display_game_over()
@@ -416,8 +428,8 @@ while True:
                     pygame.quit()
                     exit()
 
-            screen.blit(background_surface, (0, 0))
-            screen.fill('Black')
+            set_wallpaper()  
+            display_title()
 
             buttons.update()
             buttons.draw(screen)
@@ -432,4 +444,11 @@ while True:
        
             pygame.display.update()
             clock.tick(60)
-        
+    elif pause_menu:
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            
