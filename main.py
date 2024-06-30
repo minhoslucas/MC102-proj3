@@ -8,6 +8,7 @@ from Items import Points, Life
 from maze import mazes
 from itertools import chain
 from professor import Professor
+from menus import StartButton, QuitButton
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -143,14 +144,15 @@ class Player(pygame.sprite.Sprite):
                 if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
                     self.damage()
 
-        if self.rect.colliderect(professor.rect):
-            self.damage()
+        # if self.rect.colliderect(professor.rect):
+        #     self.damage()
 
     #Dá dano em player
     def damage(self):
         if not self.invincible:
             self.life -= 1
             self.activate_timer()
+        
     #Coloca uma bomba no mapa
     def place_bomb(self):
         x_coords = (self.coords[0]*25) + 12.5
@@ -272,8 +274,9 @@ SCREEN_HIGHT = 775
 
 pygame.init()
 
-game_active = True
+game_active = False
 game_over = False
+main_menu = True
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
@@ -300,6 +303,12 @@ bombs_item = pygame.sprite.Group()
 professor = Professor(coords_to_pixels((2, 10)), speed=2)
 professor_group = pygame.sprite.GroupSingle()
 professor_group.add(professor)
+
+buttons = pygame.sprite.Group()
+start_button = StartButton((250, 388))
+quit_button = QuitButton((750, 388))
+buttons.add(quit_button)
+buttons.add(start_button)
 
 #Mapa do labirinto
 map = random.choice(mazes)
@@ -334,67 +343,93 @@ for pos in lifes_pos:
     lifes_item.add(Life(pos[0]))
 
 #Game Loop
-if game_active:
-    while True:
-        for event in pygame.event.get():
-            if event.type ==  pygame.QUIT:
+while True:
+    if game_active:
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            #Plota na tela o plano de fundo e player
+            screen.blit(background_surface, (0,0))
+            screen.fill('Black')   
+            floors.draw(screen)
+
+            #Atualiza player e o timer da bomba/explosão
+            player.update()
+            bombs_item.update()
+            explosions.update()
+
+            #Plota as coisas dependendo da matriz
+            walls.draw(screen)
+            map_borders.draw(screen)
+            player.draw(screen)
+            points_item.draw(screen)
+            lifes_item.draw(screen)
+            bombs_item.draw(screen)
+            explosions.draw(screen)
+            professor_group.draw(screen)
+
+            professor.dest = player_class.rect.center
+
+            professor_group.update()
+
+            #Desenham a pontuação, vida, coordenadas, e tempo 
+            display_score()
+            display_life_count()
+            display_coords()
+            if not display_timer() or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
+                game_over = True
+                game_active = False
+                break
+
+            #Configurações da bomba
+            explosion_damage()
+            kill_explosion()
+            kill_bomb()
+
+            #Atualiza o jogo constantemente
+            pygame.display.update()
+            clock.tick(60)
+
+    elif game_over:
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            #Plota na tela o plano de fundo
+            screen.blit(background_surface, (0,0))
+            screen.fill('Black')
+
+            #Desenha a tela de GAME OVER
+            display_game_over()
+
+            pygame.display.update()
+            clock.tick(60)
+    elif main_menu:
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            screen.blit(background_surface, (0, 0))
+            screen.fill('Black')
+
+            buttons.update()
+            buttons.draw(screen)
+
+            if start_button.is_clicked == True:
+                main_menu = False
+                game_active = True
+                break
+            elif quit_button.is_clicked == True:
                 pygame.quit()
                 exit()
-
-        #Plota na tela o plano de fundo e player
-        screen.blit(background_surface, (0,0))
-        screen.fill('Black')   
-        player.draw(screen)
-
-        #Atualiza player e o timer da bomba/explosão
-        player.update()
-        bombs_item.update()
-        explosions.update()
-
-        #Plota as coisas dependendo da matriz
-        walls.draw(screen)
-        map_borders.draw(screen)
-        points_item.draw(screen)
-        lifes_item.draw(screen)
-        bombs_item.draw(screen)
-        explosions.draw(screen)
-        professor_group.draw(screen)
-
-        professor.dest = player_class.rect.center
-
-        professor_group.update()
-
-        #Desenham a pontuação, vida, coordenadas, e tempo 
-        display_score()
-        display_life_count()
-        display_coords()
-        if not display_timer() or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
-            game_over = True
-            game_active = False
-            break
-
-        #Configurações da bomba
-        explosion_damage()
-        kill_explosion()
-        kill_bomb()
-
-        #Atualiza o jogo constantemente
-        pygame.display.update()
-        clock.tick(60)
-
-if game_over:
-    while True:
-        for event in pygame.event.get():
-            if event.type ==  pygame.QUIT:
-                pygame.quit()
-                exit()
-
-        #Plota na tela o plano de fundo
-        screen.blit(background_surface, (0,0))
-        screen.fill('Black')
-
-        #Desenha a tela de GAME OVER
-        display_game_over()
-
-        pygame.display.update()
-        clock.tick(60)
+       
+            pygame.display.update()
+            clock.tick(60)
+        
