@@ -21,7 +21,7 @@ def coords_to_pixels(xy: tuple[int, int]):
     return x, y
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, life = 6, points = 0, coords = (1, 6), bomb_cooldown = 0):
+    def __init__(self, life = 6, points = 0, coords = (1, 6), bomb_cooldown = 0, pause_key = False):
         super().__init__()
         self.image = pygame.Surface((15, 15))
         self.image.fill('Red')
@@ -32,6 +32,8 @@ class Player(pygame.sprite.Sprite):
         self._bomb_cooldown = bomb_cooldown
         self.invincible = False
         self.start_time = 0
+        self._pause_key = pause_key
+
 
     @property
     def points(self):
@@ -61,6 +63,13 @@ class Player(pygame.sprite.Sprite):
     def bomb_cooldown(self, bomb_cooldown):
         self._bomb_cooldown = bomb_cooldown
 
+    @property
+    def pause_key(self):
+        return self._pause_key
+    @pause_key.setter
+    def pause_key(self, pause_key):
+        self._pause_key = pause_key
+
     #Checa os inputs do teclado para player
     def player_input(self):
         keys = pygame.key.get_pressed()
@@ -85,6 +94,9 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE]:
             if self.bomb_cooldown == 0:
                 self.place_bomb()
+
+        if keys[pygame.K_ESCAPE]:
+            self.pause_key = True
 
     #Impede que o player saia da tela
     def screen_limits(self):
@@ -317,11 +329,16 @@ professor = Professor(coords_to_pixels((2, 10)), speed=2)
 professor_group = pygame.sprite.GroupSingle()
 professor_group.add(professor)
 
-buttons = pygame.sprite.Group()
+menu_buttons = pygame.sprite.Group()
 start_button = Start((250, 388))
-quit_button = Quit((750, 388))
-buttons.add(quit_button)
-buttons.add(start_button)
+quit_button_menu = Quit((750, 388))
+menu_buttons.add(start_button, quit_button_menu)
+
+pause_buttons = pygame.sprite.Group()
+quit_button_pause = Quit((250, 400))
+resume_button = Resume((250, 300))
+restart_button = Restart((250, 200))
+pause_buttons.add(quit_button_pause, resume_button, restart_button)
 
 #Mapa do labirinto
 map = random.choice(mazes)
@@ -358,7 +375,16 @@ for pos in lifes_pos:
 #Game Loop
 while True:
     if game_active:
-        start_time = pygame.time.get_ticks()//1000
+        if player_class.pause_key == True:
+            if restart:
+                start_time = pygame.time.get_ticks()//1000
+                time_diff = 0
+                restart = False
+            player_class.pause_key = False
+            start_time += time_diff
+        else: 
+            start_time = pygame.time.get_ticks()//1000
+            time_diff = 0
         while True:
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
@@ -392,8 +418,14 @@ while True:
             display_score()
             display_life_count()
             display_coords()
+
             if not display_timer(start_time=start_time) or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
                 game_over = True
+                game_active = False
+                break
+            
+            if player_class.pause_key == True:
+                pause_menu = True
                 game_active = False
                 break
 
@@ -431,24 +463,56 @@ while True:
             set_wallpaper()  
             display_title()
 
-            buttons.update()
-            buttons.draw(screen)
+            menu_buttons.update()
+            menu_buttons.draw(screen)
 
             if start_button.is_clicked == True:
                 main_menu = False
                 game_active = True
                 break
-            elif quit_button.is_clicked == True:
+            elif quit_button_menu.is_clicked == True:
                 pygame.quit()
                 exit()
        
             pygame.display.update()
             clock.tick(60)
     elif pause_menu:
+        pause_start = pygame.time.get_ticks()//1000
         while True:
+            restart = False
+
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
                     pygame.quit()
                     exit()
+
+            set_wallpaper()
+
+            pause_buttons.update()
+            pause_buttons.draw(screen)
+
+            if resume_button.is_clicked == True:
+                pause_end = pygame.time.get_ticks()//1000
+                pause_menu = False
+                game_active = True
+                time_diff = pause_end - pause_start
+                break
+
+            elif quit_button_pause.is_clicked == True:
+                pygame.quit()
+                exit()
+
+            elif restart_button.is_clicked == True:
+                restart = True
+                pause_menu = False
+                game_active = True
+                player_class.rect.x, player_class.rect.y = 75, 375
+                player_class.points = 0
+                player_class.life = 6 
+                break
+                #falta reespawnar os itens
+
+            pygame.display.update()
+            clock.tick(60)         
 
             
