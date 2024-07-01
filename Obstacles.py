@@ -19,3 +19,17 @@ class Floor(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(path.join('images', 'floor_tile.png')).convert()
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
+
+class Entrance(pygame.sprite.Sprite):
+    def __init__(self, pos: tuple[int, int]):
+        super().__init__()
+        self.image = pygame.Surface((25, 25))
+        self.image.fill('Green')
+        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
+
+class Exit(pygame.sprite.Sprite):
+    def __init__(self, pos: tuple[int, int]):
+        super().__init__()
+        self.image = pygame.Surface((25, 25))
+        self.image.fill('Red')
+        self.rect = self.image.get_rect(center = (pos[0], pos[1]))   

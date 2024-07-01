@@ -2,7 +2,7 @@ import pygame
 import random
 from sys import exit
 from os import path
-from Obstacles import Wall, UnbreakableWall, Floor
+from Obstacles import Wall, UnbreakableWall, Floor, Entrance, Exit
 from Explosion import  Explosion, ActiveBomb
 from Items import Points, Life
 from maze import mazes
@@ -33,7 +33,15 @@ class Player(pygame.sprite.Sprite):
         self.invincible = False
         self.start_time = 0
         self._pause_key = pause_key
+        self._is_at_exit = False
 
+
+    @property
+    def is_at_exit(self):
+        return self._is_at_exit
+    @is_at_exit.setter
+    def is_at_exit(self, is_at_exit):
+        self._is_at_exit = is_at_exit
 
     @property
     def points(self):
@@ -156,6 +164,9 @@ class Player(pygame.sprite.Sprite):
                 if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
                     self.damage()
 
+        if self.rect.colliderect(exit_class.rect):
+            self.is_at_exit = True
+
         # if self.rect.colliderect(professor.rect):
         #     self.damage()
 
@@ -204,6 +215,13 @@ def display_score():
     score_rect = score_surf.get_rect(center = (75, 50))
     screen.blit(score_surf, score_rect)
 
+#Desenha as coordenadas na tela
+def display_coords():
+    text_font = pygame.font.Font(None, 30)
+    coords_surf = text_font.render(f'Coords: {player_class.coords}', True, 'White')
+    coords_rect = coords_surf.get_rect(center = (475, 50))
+    screen.blit(coords_surf, coords_rect)
+
 #Desenha a contagem de vidas na tela
 def display_life_count():
     text_font = pygame.font.Font(None, 30)
@@ -222,13 +240,6 @@ def set_wallpaper():
         for j in range(16):
             wallpaper_rect = wallpaper_surf.get_rect(center = (i*50 + 25, j*50 + 25))
             screen.blit(wallpaper_surf, wallpaper_rect)
-
-#Desenha as coordenadas na tela
-def display_coords():
-    text_font = pygame.font.Font(None, 30)
-    coords_surf = text_font.render(f'Coords: {player_class.coords}', True, 'White')
-    coords_rect = coords_surf.get_rect(center = (475, 50))
-    screen.blit(coords_surf, coords_rect)
 
 #Desenha o timer na tela
 def display_timer(time_limit = 120, start_time = 0):
@@ -258,6 +269,12 @@ def display_title():
     title_surf = text_font.render('Os Labirintos da Unicamp', True, 'White')
     title_rect = title_surf.get_rect(center = (500, 188))
     screen.blit(title_surf, title_rect)
+
+def display_level():
+    text_font = pygame.font.Font(None, 30)
+    level_surf = text_font.render(f'Level: {level}', True, 'White')
+    level_rect = level_surf.get_rect(center = (75, 750))
+    screen.blit(level_surf, level_rect)
 
 #Define a área afetada pela bomba
 def set_explosion(bomb):
@@ -294,6 +311,43 @@ def kill_bomb():
             set_explosion(bomb)
             pygame.sprite.Sprite.kill(bomb)
 
+def place_map(map):
+    global exit_class #POR PREGUIÇA, AJEITAR
+    for line_index, line in enumerate(map):
+        for tile_index, tile in enumerate(line):
+            tile = str(tile)
+            coords = coords_to_pixels((tile_index, line_index))
+
+            if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
+                if (tile_index == 0 and line_index == 11) or (tile_index == 39 and line_index == 11):
+                    entrance_class = Entrance(coords)
+                    exit_class = Exit(coords)
+                    entrance_tile.add(entrance_class)
+                    exit_tile.add(exit_class)
+                else: map_borders.add(UnbreakableWall(coords))
+
+            elif tile == ' ':
+                floors.add(Floor(coords))
+                if coords[0] > 200:
+                    floor_coord_list.append((coords, (line_index, tile_index)))
+
+            elif tile == '#':
+                walls.add(Wall(coords))
+
+        
+def place_items():
+
+    points_pos = random.sample(floor_coord_list, 5)
+    lifes_pos = random.sample(floor_coord_list, 5)
+
+    for pos in points_pos:
+        map[pos[1][0]][pos[1][1]] = 'P'
+        points_item.add(Points(pos[0]))
+
+    for pos in lifes_pos:
+        map[pos[1][0]][pos[1][1]] = 'L'
+        lifes_item.add(Life(pos[0]))
+
 SCREEN_WIDTH = 1000
 SCREEN_HIGHT = 775
 
@@ -303,6 +357,7 @@ game_active = False
 game_over = False
 main_menu = True
 pause_menu = False
+level = 1
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
@@ -319,6 +374,9 @@ player.add(player_class)
 walls = pygame.sprite.Group()
 map_borders = pygame.sprite.Group()
 floors = pygame.sprite.Group()
+exit_tile = pygame.sprite.GroupSingle()
+entrance_tile = pygame.sprite.GroupSingle()
+
 explosions = pygame.sprite.Group()
 
 points_item = pygame.sprite.Group()
@@ -342,36 +400,8 @@ pause_buttons.add(quit_button_pause, resume_button, restart_button)
 
 #Mapa do labirinto
 map = random.choice(mazes)
-
 floor_coord_list = []
-#Coloca os obstáculos nas suas respectivas posições
-for line_index, line in enumerate(map):
-    for tile_index, tile in enumerate(line):
-        tile = str(tile)
-        coords = coords_to_pixels((tile_index, line_index))
-
-        if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
-            map_borders.add(UnbreakableWall(coords))
-
-        elif tile == ' ':
-            floors.add(Floor(coords))
-            if coords[0] > 200:
-                floor_coord_list.append((coords, (line_index, tile_index)))
-
-        elif tile == '#':
-            walls.add(Wall(coords))
-
-#escolhe posições livres do tabuleiro e plota 5 itens points e life
-points_pos = random.sample(floor_coord_list, 5)
-for pos in points_pos:
-    map[pos[1][0]][pos[1][1]] = 'P'
-    points_item.add(Points(pos[0]))
-
-lifes_pos = random.sample(floor_coord_list, 5)
-for pos in lifes_pos:
-    map[pos[1][0]][pos[1][1]] = 'L'
-    lifes_item.add(Life(pos[0]))
-
+place_map(map)
 #Game Loop
 while True:
     if game_active:
@@ -379,12 +409,31 @@ while True:
             if restart:
                 start_time = pygame.time.get_ticks()//1000
                 time_diff = 0
+                place_map(map)
+                points_item.empty()
+                lifes_item.empty()
+                place_items()
                 restart = False
             player_class.pause_key = False
             start_time += time_diff
-        else: 
+        
+        elif player_class.is_at_exit:
             start_time = pygame.time.get_ticks()//1000
             time_diff = 0
+            map = random.choice(mazes)
+            floor_coord_list.clear()
+            place_map(map)
+            points_item.empty()
+            lifes_item.empty()
+            place_items()
+            player_class.is_at_exit = False        
+
+        else: 
+            start_time = pygame.time.get_ticks()//1000
+            place_map(map)
+            place_items()
+            time_diff = 0
+
         while True:
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
@@ -418,6 +467,7 @@ while True:
             display_score()
             display_life_count()
             display_coords()
+            display_level()
 
             if not display_timer(start_time=start_time) or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
                 game_over = True
@@ -429,6 +479,11 @@ while True:
                 game_active = False
                 break
 
+            if player_class.is_at_exit:
+                mazes.remove(map)
+                player_class.rect.x, player_class.rect.y = 75, 375
+                level += 1
+                break
             #Configurações da bomba
             explosion_damage()
             kill_explosion()
@@ -453,6 +508,7 @@ while True:
 
             pygame.display.update()
             clock.tick(60)
+
     elif main_menu:
         while True:
             for event in pygame.event.get():
@@ -510,7 +566,6 @@ while True:
                 player_class.points = 0
                 player_class.life = 6 
                 break
-                #falta reespawnar os itens
 
             pygame.display.update()
             clock.tick(60)         
