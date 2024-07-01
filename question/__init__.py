@@ -13,5 +13,6 @@ class Question:
         for key, value in dict.items():
             setattr(self, key, value)
 
-questions = {difficulty: [Question(question) for question in qList] 
-             for difficulty, qList in reader.questions.items()}
+questions: dict[str, list[Question]] = \
+    {difficulty: [Question(question) for question in qList] 
+     for difficulty, qList in reader.questions.items()}
