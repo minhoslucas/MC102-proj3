@@ -325,10 +325,10 @@ def place_map(floor_coord_list):
             tile = str(tile)
             coords = coords_to_pixels((tile_index, line_index))
 
-            if tile == 'E':
+            if tile == 'S':
                 exit_class = Exit(coords)
                 exit_tile.add(exit_class)
-            elif tile == 'S':
+            elif tile == 'E':
                 entrance_tile.add(Entrance(coords))
             elif line_index == 0 or tile_index == 0 or line_index == len(matrix)-1 or tile_index == len(matrix[line_index])-1:
                 map_borders.add(UnbreakableWall(coords))
