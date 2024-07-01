@@ -8,6 +8,7 @@ from Items import Points, Life
 from maze import mazes
 from itertools import chain
 from professor import Professor
+from classmate import Classmate
 from menus import Start, Quit, Resume, SaveAndQuit, Save, Restart
 
 def pixels_to_coords(xy: tuple[int, int]):
@@ -166,6 +167,9 @@ class Player(pygame.sprite.Sprite):
 
         if self.rect.colliderect(exit_class.rect):
             self.is_at_exit = True
+
+        if pygame.sprite.spritecollide(player_class, classmate_group, 0):
+            print(True) #temporário
 
         # if self.rect.colliderect(professor.rect):
         #     self.damage()
@@ -339,15 +343,25 @@ def place_map(floor_coord_list):
 def place_items(map):
 
     points_pos = random.sample(floor_coord_list, 5)
-    lifes_pos = random.sample(floor_coord_list, 5)
-
     for pos in points_pos:
         map[pos[1][0]][pos[1][1]] = 'P'
         points_item.add(Points(pos[0]))
 
+    lifes_pos = random.sample(floor_coord_list, 5)
     for pos in lifes_pos:
         map[pos[1][0]][pos[1][1]] = 'L'
         lifes_item.add(Life(pos[0]))
+
+def place_entities(map):
+
+    professor_pos = random.sample(floor_coord_list, 2)
+    for pos in professor_pos:
+        map[pos[1][0]][pos[1][1]] = 'p'
+        professor_group.add(Professor(pos[0]))
+    classmate_pos = random.sample(floor_coord_list, 4)
+    for pos in classmate_pos:
+        map[pos[1][0]][pos[1][1]] = 'c'
+        classmate_group.add(Classmate(pos[0]))
 
 SCREEN_WIDTH = 1000
 SCREEN_HIGHT = 775
@@ -383,9 +397,9 @@ points_item = pygame.sprite.Group()
 lifes_item = pygame.sprite.Group()
 bombs_item = pygame.sprite.Group()
 
-professor = Professor(coords_to_pixels((2, 10)), speed=2)
-professor_group = pygame.sprite.GroupSingle()
-professor_group.add(professor)
+
+professor_group = pygame.sprite.Group()
+classmate_group = pygame.sprite.Group()
 
 menu_buttons = pygame.sprite.Group()
 start_button = Start((250, 388))
@@ -411,6 +425,9 @@ while True:
                 points_item.empty()
                 lifes_item.empty()
                 place_items(map)
+                classmate_group.empty()
+                professor_group.empty()
+                place_entities(map)
                 restart = False
             player_class.pause_key = False
             start_time += time_diff
@@ -427,6 +444,9 @@ while True:
             points_item.empty()
             lifes_item.empty()
             place_items(map)
+            classmate_group.empty()
+            professor_group.empty()
+            place_entities(map)
             player_class.is_at_exit = False        
 
         #se o jogo acabou de começar
@@ -436,6 +456,7 @@ while True:
             floor_coord_list = []
             map = place_map(floor_coord_list)
             place_items(map)
+            place_entities(map)
 
         while True:
             for event in pygame.event.get():
@@ -461,9 +482,11 @@ while True:
             bombs_item.draw(screen)
             explosions.draw(screen)
             professor_group.draw(screen)
+            classmate_group.draw(screen)
 
             #professor
-            professor.dest = player_class.rect.center
+            for professor in professor_group:
+                professor.dest = player_class.rect.center
 
             professor_group.update()
 
