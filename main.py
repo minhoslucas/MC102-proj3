@@ -5,7 +5,7 @@ from os import path
 from Obstacles import Wall, UnbreakableWall, Floor, Entrance, Exit
 from Explosion import  Explosion, ActiveBomb
 from Items import Points, Life
-from maze import mazes
+from maze import mazes, MazeTemplate
 from itertools import chain
 from professor import Professor
 from classmate import Classmate
@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((15, 15))
         self.image.fill('Red')
-        self.rect = self.image.get_rect(center = (75, 375))
+        self.rect = self.image.get_rect(center = coords_to_pixels(coords))
         self._life = life
         self._points = points
         self._coords = coords
@@ -318,49 +318,48 @@ def kill_bomb():
 def place_map(floor_coord_list):
     global exit_class #POR PREGUIÇA, AJEITAR
     map = random.choice(mazes)
-    for line_index, line in enumerate(map):
+    matrix = map.matrix
+
+    for line_index, line in enumerate(matrix):
         for tile_index, tile in enumerate(line):
             tile = str(tile)
             coords = coords_to_pixels((tile_index, line_index))
 
-            if line_index == 0 or tile_index == 0 or line_index == len(map)-1 or tile_index == len(map[line_index])-1:
-                if (tile_index == 0 and line_index == 11) or (tile_index == 39 and line_index == 11):
-                    entrance_class = Entrance(coords)
-                    exit_class = Exit(coords)
-                    entrance_tile.add(entrance_class)
-                    exit_tile.add(exit_class)
-                else: map_borders.add(UnbreakableWall(coords))
-
+            if tile == 'E':
+                exit_class = Exit(coords)
+                exit_tile.add(exit_class)
+            elif tile == 'S':
+                entrance_tile.add(Entrance(coords))
+            elif line_index == 0 or tile_index == 0 or line_index == len(matrix)-1 or tile_index == len(matrix[line_index])-1:
+                map_borders.add(UnbreakableWall(coords))
             elif tile == ' ':
                 floors.add(Floor(coords))
                 if coords[0] > 200:
                     floor_coord_list.append((coords, (line_index, tile_index)))
-
             elif tile == '#':
                 walls.add(Wall(coords))
+
     return map
         
-def place_items(map):
-
+def place_items(map: MazeTemplate):
     points_pos = random.sample(floor_coord_list, 5)
     for pos in points_pos:
-        map[pos[1][0]][pos[1][1]] = 'P'
+        map.matrix[pos[1][0]][pos[1][1]] = 'P'
         points_item.add(Points(pos[0]))
 
     lifes_pos = random.sample(floor_coord_list, 5)
     for pos in lifes_pos:
-        map[pos[1][0]][pos[1][1]] = 'L'
+        map.matrix[pos[1][0]][pos[1][1]] = 'L'
         lifes_item.add(Life(pos[0]))
 
-def place_entities(map):
-
+def place_entities(map: MazeTemplate):
     professor_pos = random.sample(floor_coord_list, 2)
     for pos in professor_pos:
-        map[pos[1][0]][pos[1][1]] = 'p'
+        map.matrix[pos[1][0]][pos[1][1]] = 'p'
         professor_group.add(Professor(pos[0]))
     classmate_pos = random.sample(floor_coord_list, 4)
     for pos in classmate_pos:
-        map[pos[1][0]][pos[1][1]] = 'c'
+        map.matrix[pos[1][0]][pos[1][1]] = 'c'
         classmate_group.add(Classmate(pos[0]))
 
 SCREEN_WIDTH = 1000
@@ -378,6 +377,8 @@ level = 1
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
+
+entrance_class: Entrance
 
 #Cria um grupo para player
 player = pygame.sprite.GroupSingle()
