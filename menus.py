@@ -23,18 +23,15 @@ class Button(pygame.sprite.Sprite):
     def check_hover(self):
         if self.rect.collidepoint(self.mouse_pos):
             self.is_hovering = True
-        else: self.is_hovering = False
-
+        else: self.is_hovering = False      
     def update_image(self):
-        if self.is_hovering == False:
-            self.image = self.font.render('Button', True, 'White')
-        else: self.image = self.font.render('>  Button', True, 'White')       
-
+        return
+    
     def update(self):
+        self.update_image()
         self._get_mouse_pos()
         self.check_hover()
         self.check_click()
-        self.update_image()
 
 class Start(Button):
     def __init__(self, pos: tuple[int, int]):
