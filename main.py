@@ -239,7 +239,7 @@ def check_life_count():
     return True
 
 def set_wallpaper():
-    wallpaper_surf = pygame.image.load(path.join('images', 'background_tile.png'))
+    wallpaper_surf = pygame.image.load(path.join('assets', 'images', 'background_tile.png'))
     for i in range(20):
         for j in range(16):
             wallpaper_rect = wallpaper_surf.get_rect(center = (i*50 + 25, j*50 + 25))

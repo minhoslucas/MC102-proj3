@@ -15,7 +15,7 @@ class Wall(Tile):
 
 mazes: list[list[Tile | None]] = []
 
-MAZE_FOLDER = "mazes"
+MAZE_FOLDER = os.path.join("assets", "mazes")
 
 for file in os.scandir(MAZE_FOLDER):
     if not file.is_file():

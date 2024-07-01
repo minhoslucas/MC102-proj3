@@ -1,0 +1,9 @@
+questions:
+  - question: Qual o algorítmo de sorting usado pela função sorted()?
+    choices:
+      - Insertion Sort
+      - Tim Sort
+      - Merge Sort
+      - Quick Sort
+    answer: Tim Sort
+    difficulty: 3
