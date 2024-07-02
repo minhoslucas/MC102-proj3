@@ -7,10 +7,11 @@ from classmate import Classmate
 import random
 
 class Game:
-    def __init__(self, map = None, win = False, pause = False):
+    def __init__(self, map = None, win = False, pause = False, difficulty = 50):
         self._map = map
         self._win = win
         self._pause = pause
+        self._difficulty = difficulty
         self.floor_coord_list = []
         self.exit_tile = pygame.sprite.GroupSingle()
         self.entrance_tile = pygame.sprite.GroupSingle()
@@ -21,6 +22,13 @@ class Game:
         self.lifes_item = pygame.sprite.Group()
         self.professor_group = pygame.sprite.Group()
         self.classmate_group = pygame.sprite.Group()
+
+    @property
+    def difficulty(self):
+        return self._difficulty
+    @difficulty.setter
+    def difficulty(self, difficulty):
+        self._difficulty = difficulty
 
     @property
     def pause(self):

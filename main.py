@@ -5,7 +5,7 @@ from Obstacles import Floor
 from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
-from menus import MainMenu, PauseMenu
+from menus import MainMenu, PauseMenu, DifficultyMenu
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -268,6 +268,17 @@ def display_level():
     level_rect = level_surf.get_rect(center = (75, 750))
     screen.blit(level_surf, level_rect)
 
+def display_difficulty():
+    text_font = pygame.font.Font(None, 50)
+    if game.difficulty >= 70:
+        difficulty_surf = text_font.render(f'Difficulty: Hard', True, 'White')
+    elif game.difficulty < 70 and game.difficulty >= 30:
+        difficulty_surf = text_font.render(f'Difficulty: Medium', True, 'White')
+    else:
+        difficulty_surf = text_font.render(f'Difficulty: Easy', True, 'White')
+    difficulty_rect = difficulty_surf.get_rect(center = (500, 288))
+    screen.blit(difficulty_surf, difficulty_rect)
+
 #Define a área afetada pela bomba
 def set_explosion(bomb):
     explosions.add(Explosion((bomb.bomb_coords)))
@@ -313,6 +324,7 @@ game_active = False
 game_over = False
 main_menu = True
 pause_menu = False
+difficulty_menu = False
 level = 1
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
@@ -329,6 +341,7 @@ bombs_item = pygame.sprite.Group()
 
 main_menu_class = MainMenu()
 pause_menu_class = PauseMenu()
+difficulty_menu_class = DifficultyMenu()
 
 game = Game()
 
@@ -466,7 +479,12 @@ while True:
             elif main_menu_class.quit_button.is_clicked:
                 pygame.quit()
                 exit()
-       
+
+            elif main_menu_class.difficulty_button.is_clicked:
+                main_menu = False
+                difficulty_menu = True
+                break
+
             pygame.display.update()
             clock.tick(60)
 
@@ -509,4 +527,28 @@ while True:
                 break
 
             pygame.display.update()
-            clock.tick(60)         
+            clock.tick(60)
+    elif difficulty_menu:
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            set_wallpaper()
+            display_difficulty()
+
+            difficulty_menu_class.difficulty_buttons.update()
+            difficulty_menu_class.sliders.update()
+            difficulty_menu_class.difficulty_buttons.draw(screen)
+            difficulty_menu_class.sliders.draw(screen)
+
+            if difficulty_menu_class.back_button.is_clicked:
+                difficulty_menu = False
+                main_menu = True
+                break
+            
+            game.difficulty = difficulty_menu_class.slider_button.val
+
+            pygame.display.update()
+            clock.tick(60)                               
