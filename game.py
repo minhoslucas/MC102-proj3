@@ -6,12 +6,15 @@ from professor import Professor
 from classmate import Classmate
 import random
 
+
 class Game:
-    def __init__(self, map = None, win = False, pause = False, difficulty = 50, time = 0):
+    def __init__(self, map = None, win = False, pause = False, over = False, difficulty = 50, time = 0):
         self._map = map
         self._win = win
         self._pause = pause
+        self._over = over
         self._time = time
+        self.all_mazes = mazes.copy()
         self.extra_time = 0
         self._difficulty = difficulty
         self.floor_coord_list = []
@@ -25,6 +28,13 @@ class Game:
         self.time_item = pygame.sprite.Group()
         self.professor_group = pygame.sprite.Group()
         self.classmate_group = pygame.sprite.Group()
+
+    @property
+    def over(self):
+        return self._over
+    @over.setter
+    def over(self, over):
+        self._over = over
 
     @property
     def time(self):
@@ -80,18 +90,20 @@ class Game:
         self.time += 10*self.extra_time
 
         if self.time <= 0:
-            return False
+            self.over = True
         if self.time%60 < 10:
             timer_surf = text_font.render(f'Time: {self.time//60}:0{self.time%60}', True, 'White')
         else:
             timer_surf = text_font.render(f'Time: {self.time//60}:{self.time%60}', True, 'White')
         timer_rect = timer_surf.get_rect(center = (675, 50))
         screen.blit(timer_surf, timer_rect)
-        return True
 
     def _place_map(self):
-        if (not self.map) or (self.map not in mazes):
+        if self.over:
+            self.map = random.choice(self.all_mazes)
+        elif (not self.map) or (self.map not in mazes):
             self.map = random.choice(mazes)
+
         matrix = self.map.matrix
 
         for line_index, line in enumerate(matrix):
@@ -106,29 +118,39 @@ class Game:
                     self.entrance_tile.add(Entrance(coords))
                 elif line_index == 0 or tile_index == 0 or line_index == len(matrix)-1 or tile_index == len(matrix[line_index])-1:
                     self.map_borders.add(UnbreakableWall(coords))
+                elif tile == '#':
+                    self.walls.add(Wall(coords))
                 elif tile == ' ':
                     self.floors.add(Floor(coords))
                     if coords[0] > 200:
                         self.floor_coord_list.append((coords, (line_index, tile_index)))
-                elif tile == '#':
-                    self.walls.add(Wall(coords))
+        
+        for wall in self.walls.sprites():  #remove na marra os tiles com overlapping
+            for tile in self.floor_coord_list:
+                if wall.wall_coords == tile[0]:
+                   self.floor_coord_list.remove(tile)
+                
 
     def _place_items(self):
 
         points_pos = random.sample(self.floor_coord_list, 5)
         for pos in points_pos:
+            self.floor_coord_list.remove(pos)
             self.map.matrix[pos[1][0]][pos[1][1]] = 'P'
             self.points_item.add(Points(pos[0]))
-
+            print(f'points_pos: {pos}')
         lifes_pos = random.sample(self.floor_coord_list, 5)
         for pos in lifes_pos:
+            self.floor_coord_list.remove(pos)
             self.map.matrix[pos[1][0]][pos[1][1]] = 'L'
             self.lifes_item.add(Life(pos[0]))
-
+            print(f'lifes_pos: {pos}')
         time_pos = random.sample(self.floor_coord_list, 3)
         for pos in time_pos:
+            self.floor_coord_list.remove(pos)
             self.map.matrix[pos[1][0]][pos[1][1]] = 'T'
             self.time_item.add(Time(pos[0]))
+            print(f'time_pos: {pos}')
 
     def _place_entities(self):
         if self.difficulty >= 70:
@@ -148,6 +170,7 @@ class Game:
         for pos in professor_pos:
             self.map.matrix[pos[1][0]][pos[1][1]] = 'p'
             self.professor_group.add(Professor(pos[0], prof_speed))
+
         classmate_pos = random.sample(self.floor_coord_list, num_class)
         for pos in classmate_pos:
             self.map.matrix[pos[1][0]][pos[1][1]] = 'c'
@@ -166,7 +189,8 @@ class Game:
         self.map_borders.empty()
         self.points_item.empty()
         self.lifes_item.empty()
-        self.floor_coord_list.clear()
+        self.time_item.empty()
+        self.floor_coord_list = []
     
     def _remove_maze(self):
         mazes.remove(self.map)
@@ -176,11 +200,21 @@ class Game:
         self._remove_maze()
         self.place_game()
 
+    def full_restart(self):
+        self.classmate_group.empty()
+        self.professor_group.empty()
+        self.points_item.empty()
+        self.lifes_item.empty()
+        self.time_item.empty()
+        self.floor_coord_list = []
+        self.place_game()
+
     def restart(self):
         self.classmate_group.empty()
         self.professor_group.empty()
         self.points_item.empty()
         self.lifes_item.empty()
+        self.time_item.empty()
         self.place_game()
 
     def start(self):

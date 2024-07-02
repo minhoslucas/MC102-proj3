@@ -1,5 +1,5 @@
 import pygame
-from buttons import Start, Quit, Restart, Resume, Back, Difficulty, SliderCase, SliderButton
+from buttons import Start, Quit, Restart, Resume, Back, Difficulty, BackToMenu, SliderButton
 
 class MainMenu:
     def __init__(self):
@@ -26,6 +26,14 @@ class DifficultyMenu:
         self.slider_button = SliderButton((500, 388), 50)
         self.slider_case = self.slider_button.slider_case
         self.sliders.add(self.slider_case, self.slider_button)
+
+class GameOverMenu:
+    def __init__(self):
+        self.game_over_buttons = pygame.sprite.Group()
+        self.main_menu_button = BackToMenu((200, 488))
+        self.restart_button = Restart((500, 488))
+        self.quit_button = Quit((800, 488))
+        self.game_over_buttons.add(self.main_menu_button, self.quit_button, self.restart_button)
 
     
     

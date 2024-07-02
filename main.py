@@ -5,7 +5,7 @@ from Obstacles import Floor
 from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
-from menus import MainMenu, PauseMenu, DifficultyMenu
+from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -162,7 +162,7 @@ class Player(pygame.sprite.Sprite):
     #Dá dano em player
     def damage(self):
         if not self.invincible:
-            self.life -= 1
+            self.life -= 6
             self.activate_timer()
         
     #Coloca uma bomba no mapa
@@ -198,10 +198,15 @@ class Player(pygame.sprite.Sprite):
         self.life = 6
         self.place_player(coords_to_pixels((1, 11)))
 
+    def check_life_count(self):
+        if self.life == 0:
+            game.over = True
+
     #Função UPDATE, atualizada o tempo todo no Game Loop
     def update(self):
         self.invincible_timer()
         self.check_colisions()
+        self.check_life_count()
         self.player_input()
         self.screen_limits()
 
@@ -226,11 +231,6 @@ def display_life_count():
     life_rect = life_surf.get_rect(center = (275, 50))
     screen.blit(life_surf, life_rect)
 
-def check_life_count():
-    if player_class.life == 0:
-        return False
-    return True
-
 def set_wallpaper():
     wallpaper_surf = pygame.image.load(path.join('assets', 'images', 'background_tile.png'))
     for i in range(20):
@@ -240,9 +240,9 @@ def set_wallpaper():
 
 #Desenha a tela de GAME OVER
 def display_game_over():
-    text_font = pygame.font.Font(None, 200)
+    text_font = pygame.font.Font(None, 100)
     game_over_surf = text_font.render('GAME OVER', True, 'White')
-    game_over_rect = game_over_surf.get_rect(center = (500, 388))
+    game_over_rect = game_over_surf.get_rect(center = (500, 288))
     screen.blit(game_over_surf, game_over_rect)
 
 def display_title():
@@ -331,6 +331,7 @@ bombs_item = pygame.sprite.Group()
 main_menu_class = MainMenu()
 pause_menu_class = PauseMenu()
 difficulty_menu_class = DifficultyMenu()
+game_over_menu_class = GameOverMenu()
 
 game = Game()
 
@@ -341,6 +342,7 @@ while True:
         if game.pause:
             if restart:
                 start_time = pygame.time.get_ticks()//1000
+                game.extra_time = 0
                 time_diff = 0
                 game.restart()
                 player_class.restart()
@@ -354,6 +356,13 @@ while True:
             time_diff = 0
             game.new_game()
             game.win = False
+
+        elif game.over:
+            start_time = pygame.time.get_ticks()//1000
+            time_diff = 0
+            game.full_restart()
+            player_class.restart()
+            game.over = False
 
         #se o jogo acabou de começar
         else:
@@ -399,9 +408,10 @@ while True:
             display_life_count()
             display_coords()
             display_level()
-
+            game.display_timer(screen=screen, start_time=start_time) #Tempo em segundos, por padrão, 2 minutos
             #critérios para GAME OVER
-            if not game.display_timer(screen=screen, start_time=start_time) or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
+            if game.over: 
+                level = 1
                 game_over = True
                 game_active = False
                 break
@@ -439,6 +449,23 @@ while True:
 
             #Desenha a tela de GAME OVER
             display_game_over()
+            game_over_menu_class.game_over_buttons.draw(screen)
+            game_over_menu_class.game_over_buttons.update()
+
+            if game_over_menu_class.main_menu_button.is_clicked:
+                main_menu = True
+                game_over = False
+                break
+
+            elif game_over_menu_class.quit_button.is_clicked:
+                pygame.quit()
+                exit()
+            
+            elif game_over_menu_class.restart_button.is_clicked:
+                game_active = True
+                game_over = False
+                restart = True
+                break
 
             pygame.display.update()
             clock.tick(60)
