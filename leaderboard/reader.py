@@ -7,28 +7,34 @@ LEADERBOARD_PATH = os.path.join("data", "leaderboard.yml")
 type Leaderboard = dict[int, dict[str, dict]]
 
 def read() -> Leaderboard:
+    if not os.path.isfile(LEADERBOARD_PATH):
+        return {}
+
     with open(LEADERBOARD_PATH) as file:
         return safe_load(file)
 
 def add(score: dict) -> bool:
     is_high_score = False
 
-    with open(LEADERBOARD_PATH, "w+") as file:
-        scores: Leaderboard = safe_load(file)
+    scores = read()
 
-        if not scores:
-            scores = { score["maze"]: { score["player"]: score } }
-        else:
-            curr_score = scores["maze"][score["name"]]
-            curr_score = (curr_score["time"], curr_score["score"])
+    if not scores or len(scores) <= 0:
+        scores = { score["maze"]: { score["player"]: score } }
+        is_high_score = True
+    else:
+        curr_score = scores[score["maze"]][score["player"]]
 
-            new_score = (score["time"], score["score"])
+        new_score = (curr_score["score"], score["score"])
+        curr_score = (score["time"], curr_score["score"])
 
-            if new_score > curr_score:
-                scores["maze"][score["player"]] = score
-                is_high_score = True
+        if new_score > curr_score:
+            scores[score["maze"]][score["player"]] = score
+            is_high_score = True
 
-        safe_dump(scores, file)
+    if is_high_score:
+        with open(LEADERBOARD_PATH, "w") as file:
+            safe_dump(scores, file)
+
     return is_high_score
 
 def clear():
