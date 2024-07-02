@@ -7,6 +7,8 @@ from classmate import Classmate
 import random
 
 class Game:
+
+
     def __init__(self, map = None, win = False, pause = False):
         self._map = map
         self._win = win
@@ -25,13 +27,16 @@ class Game:
     @property
     def pause(self):
         return self._pause
+    
     @pause.setter
     def pause(self, pause):
         self._pause = pause
 
+
     @property
     def win(self):
         return self._win
+    
     @win.setter
     def win(self, win):
         self._win = win
@@ -131,5 +136,3 @@ class Game:
 
     def start(self):
         self.place_game()
-
-    
