@@ -23,9 +23,9 @@ def add(score: dict) -> bool:
         is_high_score = True
     else:
         curr_score = scores[score["maze"]][score["player"]]
-        curr_score = (curr_score["time"], curr_score["score"])
 
-        new_score = (score["time"], score["score"])
+        new_score = (curr_score["score"], score["score"])
+        curr_score = (score["time"], curr_score["score"])
 
         if new_score > curr_score:
             scores[score["maze"]][score["player"]] = score

@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     assert lb[mock_score.maze-1][0] == mock_score
 
-    mock_score = Score("meida", 300, 650, 2)
+    mock_score = Score("meida", 250, 600, 2)
     mock_score.save()
 
     lb = leaderboard()
