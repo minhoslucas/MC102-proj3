@@ -38,8 +38,14 @@ if __name__ == "__main__":
     mock_score = Score("meida", 300, 600, 2)
     mock_score.save()
 
-    leaderboard = leaderboard()
+    lb = leaderboard()
 
-    assert leaderboard[mock_score.maze-1][0] == mock_score
+    assert lb[mock_score.maze-1][0] == mock_score
 
-    clear()
+    mock_score = Score("meida", 300, 650, 2)
+    mock_score.save()
+
+    lb = leaderboard()
+
+    assert lb[mock_score.maze-1][0].score == mock_score.score
+
