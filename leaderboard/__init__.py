@@ -17,12 +17,16 @@ class Score:
     def save(self):
         add(self.__dict__)
 
-def leaderboard() -> list[Score]:
-    leaderboard = read()
+def leaderboard() -> list[list[Score]]:
+    raw_leaderboard = read()
+    leaderboard = []
 
-    leaderboard = [Score(**score) for score in leaderboard]
+    for maze, scores in raw_leaderboard.items():
+        if len(leaderboard) < maze:
+            leaderboard += [[] for _ in range(maze - len(leaderboard))]
 
-    leaderboard.sort()
+        leaderboard[maze-1] = [Score(**score) for score in scores.values()]
+        leaderboard[maze-1].sort()
 
     return leaderboard
 
@@ -36,6 +40,6 @@ if __name__ == "__main__":
 
     leaderboard = leaderboard()
 
-    assert leaderboard[0] == mock_score
+    assert leaderboard[mock_score.maze-1][0] == mock_score
 
     clear()
