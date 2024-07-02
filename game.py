@@ -101,11 +101,24 @@ class Game:
             self.lifes_item.add(Life(pos[0]))
 
     def _place_entities(self):
-        professor_pos = random.sample(self.floor_coord_list, 2)
+        if self.difficulty >= 70:
+            num_prof = 4
+            num_class = 4
+            prof_speed = 4
+        elif self.difficulty < 70 and self.difficulty >= 30:
+            num_prof = 3
+            num_class = 4
+            prof_speed = 3
+        else:
+            num_prof = 2
+            num_class = 3
+            prof_speed = 2
+
+        professor_pos = random.sample(self.floor_coord_list, num_prof)
         for pos in professor_pos:
             self.map.matrix[pos[1][0]][pos[1][1]] = 'p'
-            self.professor_group.add(Professor(pos[0]))
-        classmate_pos = random.sample(self.floor_coord_list, 4)
+            self.professor_group.add(Professor(pos[0], prof_speed))
+        classmate_pos = random.sample(self.floor_coord_list, num_class)
         for pos in classmate_pos:
             self.map.matrix[pos[1][0]][pos[1][1]] = 'c'
             self.classmate_group.add(Classmate(pos[0]))
