@@ -352,11 +352,16 @@ def place_items(map: MazeTemplate):
         map.matrix[pos[1][0]][pos[1][1]] = 'L'
         lifes_item.add(Life(pos[0]))
 
+professor: Professor
+
 def place_entities(map: MazeTemplate):
+    global professor
+
     professor_pos = random.sample(floor_coord_list, 2)
     for pos in professor_pos:
         map.matrix[pos[1][0]][pos[1][1]] = 'p'
-        professor_group.add(Professor(pos[0]))
+        professor = Professor(pos[0])
+        professor_group.add(professor)
     classmate_pos = random.sample(floor_coord_list, 4)
     for pos in classmate_pos:
         map.matrix[pos[1][0]][pos[1][1]] = 'c'
@@ -374,7 +379,10 @@ main_menu = True
 pause_menu = False
 level = 1
 
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
+transparent = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
@@ -485,11 +493,22 @@ while True:
             professor_group.draw(screen)
             classmate_group.draw(screen)
 
-            #professor
-            for professor in professor_group:
-                professor.dest = player_class.rect.center
-
             professor_group.update()
+
+            line = pygame.draw.line(transparent, "#ffffffdd", professor.rect.center, 
+                                    player_class.rect.center, width=15)
+
+            collided = False
+
+            for wall in chain(walls.sprites(), map_borders.sprites()):
+                if line.colliderect(wall.rect):
+                    collided = True
+
+            if collided:
+                professor.update_destination(map.matrix, player_class.coords)
+            else:
+                professor.route = []
+                professor.walk_to(player_class.rect.center)
 
             #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()
