@@ -139,6 +139,11 @@ class Player(pygame.sprite.Sprite):
                 if self.life < 6:
                     self.life += item._value
 
+        for item in game.time_item.sprites():
+            if self.rect.colliderect(item.rect):
+                pygame.sprite.Sprite.kill(item)
+                game.extra_time += item._value
+
         if len(explosions.sprites()) > 0:
             for explosion in explosions.sprites():
                 if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
@@ -147,7 +152,7 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(player_class, game.exit_tile, 0):
             self.place_player(coords_to_pixels((1, 11)))
             game.win = True
-
+            game.extra_time = 0
         if pygame.sprite.spritecollide(player_class, game.classmate_group, 0):
             print(True) #temporário
 
@@ -232,22 +237,6 @@ def set_wallpaper():
         for j in range(16):
             wallpaper_rect = wallpaper_surf.get_rect(center = (i*50 + 25, j*50 + 25))
             screen.blit(wallpaper_surf, wallpaper_rect)
-
-#Desenha o timer na tela
-def display_timer(time_limit = 120, start_time = 0):
-    text_font = pygame.font.Font(None, 30)
-    real_time = start_time + time_limit - pygame.time.get_ticks()//1000
-
-    if real_time <= 0:
-        player_class.rect.center = (75, 375)
-        return False
-    if real_time%60 < 10:
-        timer_surf = text_font.render(f'Time: {real_time//60}:0{real_time%60}', True, 'White')
-    else:
-        timer_surf = text_font.render(f'Time: {real_time//60}:{real_time%60}', True, 'White')
-    timer_rect = timer_surf.get_rect(center = (675, 50))
-    screen.blit(timer_surf, timer_rect)
-    return True
 
 #Desenha a tela de GAME OVER
 def display_game_over():
@@ -393,6 +382,7 @@ while True:
             player.draw(screen)
             game.points_item.draw(screen)
             game.lifes_item.draw(screen)
+            game.time_item.draw(screen)
             bombs_item.draw(screen)
             explosions.draw(screen)
             game.professor_group.draw(screen)
@@ -411,7 +401,7 @@ while True:
             display_level()
 
             #critérios para GAME OVER
-            if not display_timer(start_time=start_time) or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
+            if not game.display_timer(screen=screen, start_time=start_time) or not check_life_count(): #Tempo em segundos, por padrão, 2 minutos
                 game_over = True
                 game_active = False
                 break

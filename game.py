@@ -1,16 +1,18 @@
 import pygame
 from maze import mazes, MazeTemplate
 from Obstacles import Wall, UnbreakableWall, Entrance, Exit, Floor
-from Items import Points, Life
+from Items import Points, Life, Time
 from professor import Professor
 from classmate import Classmate
 import random
 
 class Game:
-    def __init__(self, map = None, win = False, pause = False, difficulty = 50):
+    def __init__(self, map = None, win = False, pause = False, difficulty = 50, time = 0):
         self._map = map
         self._win = win
         self._pause = pause
+        self._time = time
+        self.extra_time = 0
         self._difficulty = difficulty
         self.floor_coord_list = []
         self.exit_tile = pygame.sprite.GroupSingle()
@@ -20,8 +22,16 @@ class Game:
         self.walls = pygame.sprite.Group()
         self.points_item = pygame.sprite.Group()
         self.lifes_item = pygame.sprite.Group()
+        self.time_item = pygame.sprite.Group()
         self.professor_group = pygame.sprite.Group()
         self.classmate_group = pygame.sprite.Group()
+
+    @property
+    def time(self):
+        return self._time
+    @time.setter
+    def time(self, time):
+        self._time = time
 
     @property
     def difficulty(self):
@@ -63,6 +73,21 @@ class Game:
         x = xy[0] * 25 + 12.5
         y = xy[1] * 25 + 87.5
         return x, y
+    
+    def display_timer(self, screen,  time_limit = 120, start_time = 0):
+        text_font = pygame.font.Font(None, 30)
+        self.time = start_time + time_limit - pygame.time.get_ticks()//1000
+        self.time += 10*self.extra_time
+
+        if self.time <= 0:
+            return False
+        if self.time%60 < 10:
+            timer_surf = text_font.render(f'Time: {self.time//60}:0{self.time%60}', True, 'White')
+        else:
+            timer_surf = text_font.render(f'Time: {self.time//60}:{self.time%60}', True, 'White')
+        timer_rect = timer_surf.get_rect(center = (675, 50))
+        screen.blit(timer_surf, timer_rect)
+        return True
 
     def _place_map(self):
         if (not self.map) or (self.map not in mazes):
@@ -99,6 +124,11 @@ class Game:
         for pos in lifes_pos:
             self.map.matrix[pos[1][0]][pos[1][1]] = 'L'
             self.lifes_item.add(Life(pos[0]))
+
+        time_pos = random.sample(self.floor_coord_list, 3)
+        for pos in time_pos:
+            self.map.matrix[pos[1][0]][pos[1][1]] = 'T'
+            self.time_item.add(Time(pos[0]))
 
     def _place_entities(self):
         if self.difficulty >= 70:
