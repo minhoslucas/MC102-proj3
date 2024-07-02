@@ -1,15 +1,11 @@
 import pygame 
-import random
 from sys import exit
 from os import path
-from Obstacles import Wall, UnbreakableWall, Floor, Entrance, Exit
+from Obstacles import Floor
 from Explosion import  Explosion, ActiveBomb
-from Items import Points, Life
-from maze import mazes, MazeTemplate
 from itertools import chain
-from professor import Professor
-from classmate import Classmate
-from menus import Start, Quit, Resume, SaveAndQuit, Save, Restart
+from game import Game
+from menus import MainMenu, PauseMenu
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -22,7 +18,7 @@ def coords_to_pixels(xy: tuple[int, int]):
     return x, y
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, life = 6, points = 0, coords = (1, 6), bomb_cooldown = 0, pause_key = False):
+    def __init__(self, life = 6, points = 0, coords = (1, 11), bomb_cooldown = 0):
         super().__init__()
         self.image = pygame.Surface((15, 15))
         self.image.fill('Red')
@@ -33,16 +29,6 @@ class Player(pygame.sprite.Sprite):
         self._bomb_cooldown = bomb_cooldown
         self.invincible = False
         self.start_time = 0
-        self._pause_key = pause_key
-        self._is_at_exit = False
-
-
-    @property
-    def is_at_exit(self):
-        return self._is_at_exit
-    @is_at_exit.setter
-    def is_at_exit(self, is_at_exit):
-        self._is_at_exit = is_at_exit
 
     @property
     def points(self):
@@ -72,13 +58,6 @@ class Player(pygame.sprite.Sprite):
     def bomb_cooldown(self, bomb_cooldown):
         self._bomb_cooldown = bomb_cooldown
 
-    @property
-    def pause_key(self):
-        return self._pause_key
-    @pause_key.setter
-    def pause_key(self, pause_key):
-        self._pause_key = pause_key
-
     #Checa os inputs do teclado para player
     def player_input(self):
         keys = pygame.key.get_pressed()
@@ -105,7 +84,7 @@ class Player(pygame.sprite.Sprite):
                 self.place_bomb()
 
         if keys[pygame.K_ESCAPE]:
-            self.pause_key = True
+            game.pause = True
 
     #Impede que o player saia da tela
     def screen_limits(self):
@@ -129,7 +108,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.y += movement
 
-        for wall in chain(walls.sprites(), map_borders.sprites()):
+        for wall in chain(game.walls.sprites(), game.map_borders.sprites()):
             if self.rect.colliderect(wall.rect):
                 if axis == 0:
                     if movement > 0:
@@ -142,18 +121,18 @@ class Player(pygame.sprite.Sprite):
                     else: 
                         self.rect.top = wall.rect.bottom
 
-        for floor in floors.sprites():
+        for floor in game.floors.sprites():
             if self.rect.colliderect(floor.rect):
                 self.coords = pixels_to_coords(floor.rect.center)
 
     #Checa por colisões de player com itens ou explosões
     def check_colisions(self):
-        for item in points_item.sprites():
+        for item in game.points_item.sprites():
             if self.rect.colliderect(item.rect):
                 self.points += item._value
                 pygame.sprite.Sprite.kill(item)
 
-        for item in lifes_item.sprites():
+        for item in game.lifes_item.sprites():
             if self.rect.colliderect(item.rect):
                 pygame.sprite.Sprite.kill(item)
 
@@ -165,10 +144,11 @@ class Player(pygame.sprite.Sprite):
                 if self.rect.colliderect(explosion.rect) and explosion.explosion_hitbox:
                     self.damage()
 
-        if self.rect.colliderect(exit_class.rect):
-            self.is_at_exit = True
+        if pygame.sprite.spritecollide(player_class, game.exit_tile, 0):
+            self.place_player(coords_to_pixels((1, 11)))
+            game.win = True
 
-        if pygame.sprite.spritecollide(player_class, classmate_group, 0):
+        if pygame.sprite.spritecollide(player_class, game.classmate_group, 0):
             print(True) #temporário
 
         # if self.rect.colliderect(professor.rect):
@@ -204,6 +184,14 @@ class Player(pygame.sprite.Sprite):
             if delta >= 2000:
                 self.start_time = 0
                 self.invincible = False
+
+    def place_player(self, xy: tuple[int, int]):
+        self.rect.center = xy
+
+    def restart(self):
+        self.points = 0
+        self.life = 6
+        self.place_player(coords_to_pixels((1, 11)))
 
     #Função UPDATE, atualizada o tempo todo no Game Loop
     def update(self):
@@ -293,11 +281,11 @@ def set_explosion(bomb):
 #Checa as colisões da bomba em relação à outros obstáculos
 def explosion_damage():
     for explosion in explosions.sprites():
-        for wall in walls.sprites():
+        for wall in game.walls.sprites():
             if explosion.rect.colliderect(wall.rect):
                 coords = wall.wall_coords
                 pygame.sprite.Sprite.kill(wall)
-                floors.add(Floor(coords))
+                game.floors.add(Floor(coords))
 
 #Mata a explosão depos que acabar o timer dela
 def kill_explosion():
@@ -315,53 +303,6 @@ def kill_bomb():
             set_explosion(bomb)
             pygame.sprite.Sprite.kill(bomb)
 
-def place_map(floor_coord_list):
-    global exit_class #POR PREGUIÇA, AJEITAR
-    map = random.choice(mazes)
-    matrix = map.matrix
-
-    for line_index, line in enumerate(matrix):
-        for tile_index, tile in enumerate(line):
-            tile = str(tile)
-            coords = coords_to_pixels((tile_index, line_index))
-
-            if tile == 'S':
-                exit_class = Exit(coords)
-                exit_tile.add(exit_class)
-            elif tile == 'E':
-                entrance_tile.add(Entrance(coords))
-            elif line_index == 0 or tile_index == 0 or line_index == len(matrix)-1 or tile_index == len(matrix[line_index])-1:
-                map_borders.add(UnbreakableWall(coords))
-            elif tile == ' ':
-                floors.add(Floor(coords))
-                if coords[0] > 200:
-                    floor_coord_list.append((coords, (line_index, tile_index)))
-            elif tile == '#':
-                walls.add(Wall(coords))
-
-    return map
-        
-def place_items(map: MazeTemplate):
-    points_pos = random.sample(floor_coord_list, 5)
-    for pos in points_pos:
-        map.matrix[pos[1][0]][pos[1][1]] = 'P'
-        points_item.add(Points(pos[0]))
-
-    lifes_pos = random.sample(floor_coord_list, 5)
-    for pos in lifes_pos:
-        map.matrix[pos[1][0]][pos[1][1]] = 'L'
-        lifes_item.add(Life(pos[0]))
-
-def place_entities(map: MazeTemplate):
-    professor_pos = random.sample(floor_coord_list, 2)
-    for pos in professor_pos:
-        map.matrix[pos[1][0]][pos[1][1]] = 'p'
-        professor_group.add(Professor(pos[0]))
-    classmate_pos = random.sample(floor_coord_list, 4)
-    for pos in classmate_pos:
-        map.matrix[pos[1][0]][pos[1][1]] = 'c'
-        classmate_group.add(Classmate(pos[0]))
-
 SCREEN_WIDTH = 1000
 SCREEN_HIGHT = 775
 
@@ -378,86 +319,45 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
-entrance_class: Entrance
-
 #Cria um grupo para player
 player = pygame.sprite.GroupSingle()
 player_class = Player()
 player.add(player_class)
 
-#Cria um grupo para todos os obtáculos e itens do jogo
-walls = pygame.sprite.Group()
-map_borders = pygame.sprite.Group()
-floors = pygame.sprite.Group()
-exit_tile = pygame.sprite.GroupSingle()
-entrance_tile = pygame.sprite.GroupSingle()
-
 explosions = pygame.sprite.Group()
-
-points_item = pygame.sprite.Group()
-lifes_item = pygame.sprite.Group()
 bombs_item = pygame.sprite.Group()
 
+main_menu_class = MainMenu()
+pause_menu_class = PauseMenu()
 
-professor_group = pygame.sprite.Group()
-classmate_group = pygame.sprite.Group()
-
-menu_buttons = pygame.sprite.Group()
-start_button = Start((250, 388))
-quit_button_menu = Quit((750, 388))
-menu_buttons.add(start_button, quit_button_menu)
-
-pause_buttons = pygame.sprite.Group()
-quit_button_pause = Quit((250, 400))
-resume_button = Resume((250, 300))
-restart_button = Restart((250, 200))
-pause_buttons.add(quit_button_pause, resume_button, restart_button)
+game = Game()
 
 #Game Loop
 while True:
     if game_active:
-
-        #se o jogo estava no modo pause 
-        if player_class.pause_key == True:
+        # se o jogo estava no modo pause 
+        if game.pause:
             if restart:
                 start_time = pygame.time.get_ticks()//1000
                 time_diff = 0
-                map = place_map(floor_coord_list)
-                points_item.empty()
-                lifes_item.empty()
-                place_items(map)
-                classmate_group.empty()
-                professor_group.empty()
-                place_entities(map)
+                game.restart()
+                player_class.restart()
                 restart = False
-            player_class.pause_key = False
+            game.pause = False
             start_time += time_diff
         
         #se player encontrou a saída
-        elif player_class.is_at_exit:
+        elif game.win:
             start_time = pygame.time.get_ticks()//1000
             time_diff = 0
-            floor_coord_list.clear()
-            floors.empty()
-            walls.empty()
-            map_borders.empty()
-            map = place_map(floor_coord_list)
-            points_item.empty()
-            lifes_item.empty()
-            place_items(map)
-            classmate_group.empty()
-            professor_group.empty()
-            place_entities(map)
-            player_class.is_at_exit = False        
+            game.new_game()
+            game.win = False
 
         #se o jogo acabou de começar
-        else: 
+        else:
             start_time = pygame.time.get_ticks()//1000
             time_diff = 0
-            floor_coord_list = []
-            map = place_map(floor_coord_list)
-            place_items(map)
-            place_entities(map)
+            game.place_game()
 
         while True:
             for event in pygame.event.get():
@@ -467,7 +367,7 @@ while True:
 
             #Plota na tela o plano de fundo e o chão
             set_wallpaper()  
-            floors.draw(screen)
+            game.floors.draw(screen)
 
             #Atualiza player e o timer da bomba/explosão
             player.update()
@@ -475,21 +375,21 @@ while True:
             explosions.update()
 
             #Plota as coisas dependendo da matriz e desenha player
-            walls.draw(screen)
-            map_borders.draw(screen)
+            game.walls.draw(screen)
+            game.map_borders.draw(screen)
             player.draw(screen)
-            points_item.draw(screen)
-            lifes_item.draw(screen)
+            game.points_item.draw(screen)
+            game.lifes_item.draw(screen)
             bombs_item.draw(screen)
             explosions.draw(screen)
-            professor_group.draw(screen)
-            classmate_group.draw(screen)
+            game.professor_group.draw(screen)
+            game.classmate_group.draw(screen)
 
             #professor
-            for professor in professor_group:
+            for professor in game.professor_group:
                 professor.dest = player_class.rect.center
 
-            professor_group.update()
+            game.professor_group.update()
 
             #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()
@@ -504,17 +404,16 @@ while True:
                 break
 
             #checa se player apertou o botão 'ESC'
-            if player_class.pause_key == True:
+            if game.pause:
                 pause_menu = True
                 game_active = False
                 break
 
             #checa se player está na saída
-            if player_class.is_at_exit:
-                mazes.remove(map)
-                player_class.rect.x, player_class.rect.y = 75, 375
+            if game.win:
                 level += 1
                 break
+                
 
             #Configurações da bomba
             explosion_damage()
@@ -554,17 +453,17 @@ while True:
             display_title()
 
             #atualiza o estado dos botões
-            menu_buttons.update()
-            menu_buttons.draw(screen)
+            main_menu_class.menu_buttons.update()
+            main_menu_class.menu_buttons.draw(screen)
             
             #checa se o botão 'Start' foi selecionado
-            if start_button.is_clicked == True:
+            if main_menu_class.start_button.is_clicked:
                 main_menu = False
                 game_active = True
                 break
 
             #checa se o botão 'Quit' foi selecionado
-            elif quit_button_menu.is_clicked == True:
+            elif main_menu_class.quit_button.is_clicked:
                 pygame.quit()
                 exit()
        
@@ -586,11 +485,11 @@ while True:
             set_wallpaper()
 
             #atualiza o estado dos botões
-            pause_buttons.update()
-            pause_buttons.draw(screen)
+            pause_menu_class.pause_buttons.update()
+            pause_menu_class.pause_buttons.draw(screen)
 
             #checa se o botão 'Resume' foi clicado
-            if resume_button.is_clicked == True:
+            if pause_menu_class.resume_button.is_clicked:
                 pause_end = pygame.time.get_ticks()//1000
                 pause_menu = False
                 game_active = True
@@ -598,18 +497,15 @@ while True:
                 break
 
             #checa se o botão 'Quit' foi clicado
-            elif quit_button_pause.is_clicked == True:
+            elif pause_menu_class.quit_button.is_clicked:
                 pygame.quit()
                 exit()
 
             #checa se o botão 'Restart' foi clicado
-            elif restart_button.is_clicked == True:
+            elif pause_menu_class.restart_button.is_clicked:
                 restart = True
                 pause_menu = False
-                game_active = True
-                player_class.rect.x, player_class.rect.y = 75, 375
-                player_class.points = 0
-                player_class.life = 6 
+                game_active = True 
                 break
 
             pygame.display.update()
