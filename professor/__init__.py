@@ -1,5 +1,5 @@
 import pygame
-from professor.pathfinder import backtracker, point
+from professor.pathfinder import backtracker
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -46,7 +46,7 @@ class Professor(pygame.sprite.Sprite):
         xy = coords_to_pixels(xy)
         self.walk_to(xy)
 
-    def walk_to(self, xy: point):
+    def walk_to(self, xy: tuple[int, int]):
 
         vector = pygame.Vector2()
         dx, dy = xy[0] - self.rect.center[0], xy[1] - self.rect.center[1]
@@ -69,7 +69,7 @@ class Professor(pygame.sprite.Sprite):
 
         self.rect.center += vector
 
-    def update_destination(self, matrix, destination: point):
+    def update_destination(self, matrix, destination: tuple[int, int]):
         if len(self.route) <= 0 or self.route[-1] != destination:
             coords = pixels_to_coords(self.rect.center)
 

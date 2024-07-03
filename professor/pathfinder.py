@@ -1,8 +1,6 @@
 DIRECTIONS = { "R", "U", "L", "D" }
 
-type point = tuple[int, int]
-
-def define_directions(pos: point, destination: point):
+def define_directions(pos: tuple[int, int], destination: tuple[int, int]):
     directions = [None] * 4
     x_delta = destination[0] - pos[0]
     y_delta = destination[1] - pos[1]
@@ -25,8 +23,8 @@ def define_directions(pos: point, destination: point):
 
     return directions
 
-def backtracker(maze: list[list[str]], initial_pos: point,
-                destination: point, path: list[point]=None):
+def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
+                destination: tuple[int, int], path: list[tuple[int, int]]=None):
     if path == None or len(path) <= 0:
         path = [initial_pos]
 
@@ -40,7 +38,7 @@ def backtracker(maze: list[list[str]], initial_pos: point,
     del path[0]
     return path
 
-def _backtracker_inner(maze: list[list[str]], destination: point,
+def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
                        direction: str, path: list[tuple[int, int]], directions, first=False):
     pos = path[-1]
 
