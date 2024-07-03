@@ -30,9 +30,7 @@ def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
 
     line_len = len(maze[0])
 
-    directions = define_directions(initial_pos, destination)
-
-    if not _backtracker_inner(maze, destination, None, path, directions, first=True):
+    if not _backtracker_inner(maze, destination, None, path, first=True):
         print("nao ta tendo :c e etc")
         return []
 
@@ -40,7 +38,7 @@ def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
     return path
 
 def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
-                       direction: str, path: list[tuple[int, int]], directions, first=False):
+                       direction: str, path: list[tuple[int, int]], first=False):
     pos = path[-1]
 
     if direction == "D":
@@ -57,7 +55,7 @@ def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
     
     print(pos)
 
-    if maze[pos[1]][pos[0]] == "#":
+    if maze[pos[1]][pos[0]] == "#" or "E" or "S":
         return False
 
     if pos in path and not first:
@@ -67,9 +65,12 @@ def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
 
     if pos == destination:
         return True
+    
+    directions = define_directions(pos, destination)
+    print(directions)
 
     for next_direction in directions:
-        if _backtracker_inner(maze, destination, next_direction, path, directions):
+        if _backtracker_inner(maze, destination, next_direction, path):
             return True
 
     path.pop()
