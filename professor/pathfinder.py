@@ -5,6 +5,9 @@ def define_directions(pos: tuple[int, int], destination: tuple[int, int]):
     x_delta = destination[0] - pos[0]
     y_delta = destination[1] - pos[1]
 
+    if x_delta == 0 and y_delta == 0:
+        return list(DIRECTIONS)
+
     offset = 0 if abs(x_delta) >= abs(y_delta) else 1
 
     if x_delta <= 0:
@@ -30,8 +33,14 @@ def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
 
     line_len = len(maze[0])
 
+    # print("START", initial_pos, destination)
+
     if not _backtracker_inner(maze, destination, None, path, first=True):
-        print("nao ta tendo :c e etc")
+        # print("ERRO", end="")
+        # print(initial_pos, destination, end="")
+        # i_tile = maze[initial_pos[0]][initial_pos[1]]
+        # d_tile = maze[destination[0]][destination[1]]
+        # print((i_tile, initial_pos), (d_tile, destination))
         return []
 
     del path[0]
@@ -52,22 +61,25 @@ def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
 
     if pos[0] < 0 or pos[1] < 0:
         return False
-    
-    print(pos)
 
-    if maze[pos[1]][pos[0]] == "#" or "E" or "S":
+    if not first and maze[pos[0]][pos[1]] in { "#", "E", "S" }:
         return False
 
-    if pos in path and not first:
+    if not first and pos in path:
+        # print(path)
         return False
 
     path.append(pos)
 
+    # print_maze(maze, "caminho.out", pos, time=1)
+
     if pos == destination:
         return True
-    
+
     directions = define_directions(pos, destination)
-    print(directions)
+    # print(directions)
+
+    # print(pos, destination)
 
     for next_direction in directions:
         if _backtracker_inner(maze, destination, next_direction, path):

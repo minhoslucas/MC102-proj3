@@ -10,17 +10,33 @@ from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
     y = round((xy[1] - 87.5) // 25)
-    return x, y
+    return y, x
 
 def coords_to_pixels(xy: tuple[int, int]):
     x = xy[0] * 25 + 12.5
     y = xy[1] * 25 + 87.5
     return x, y
 
+def print_maze(maze, *movables):
+    old_pos = []
+
+    movables = set(movables)
+
+    for movable in movables:
+        old_pos.append((movable, maze[movable[0]][movable[1]]))
+        maze[movable[0]][movable[1]] = "@"
+
+    with open("output.out", "w") as file:
+        for line in maze:
+            file.write("".join(line) + "\n")
+
+    for pos, old in old_pos:
+        maze[pos[0]][pos[1]] = old
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, life = 6, points = 0, coords = (1, 11), bomb_cooldown = 0):
         super().__init__()
-        self.image = pygame.Surface((15, 15))
+        self.image = pygame.Surface((20, 20))
         self.image.fill('Red')
         self.rect = self.image.get_rect(center = coords_to_pixels(coords))
         self._life = life
@@ -416,8 +432,11 @@ while True:
             game.classmate_group.draw(screen)
 
             #professor
+
+            prof_coords = [player_class.coords]
+
             for professor in game.professor_group:
-                line = pygame.draw.line(screen, "#ffffffdd", 
+                line = pygame.draw.line(transparent, "#ffffffdd", 
                                         professor.rect.center, 
                                         player_class.rect.center)
                 
@@ -435,7 +454,11 @@ while True:
                 else:
                     professor.update_destination(game.matrix, player_class.coords)
 
+                prof_coords.append(professor.coords)
+
             game.professor_group.update()
+
+            # print_maze(game.matrix, *prof_coords)
 
             #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()

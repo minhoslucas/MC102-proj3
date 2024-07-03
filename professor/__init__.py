@@ -4,13 +4,13 @@ from professor.pathfinder import backtracker
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
     y = round((xy[1] - 87.5) // 25)
-    return x, y
+    return y, x
 
 def coords_to_pixels(xy: tuple[int, int]):
-    x = xy[0] * 25 + 12.5
-    y = xy[1] * 25 + 87.5
+    x = xy[1] * 25 + 12.5
+    y = xy[0] * 25 + 87.5
     return x, y
-
+        
 class Professor(pygame.sprite.Sprite):
     direction: bool
     speed: int
@@ -26,15 +26,15 @@ class Professor(pygame.sprite.Sprite):
     def seen(self, value):
         if (not self.seen) and value:
             self._seen = True
-            print("FOUND YOU")
+            # print("FOUND YOU")
 
     @property
-    def coords(self):
+    def pixels(self):
         return self.rect.center
     
     @property
-    def matrix_coords(self):
-        return pixels_to_coords(self.coords)
+    def coords(self):
+        return pixels_to_coords(self.pixels)
 
     def __init__(self, pos: tuple[int, int], speed = 2):
         super().__init__()
@@ -56,24 +56,28 @@ class Professor(pygame.sprite.Sprite):
 
         xy = self.route[0]
 
-        if pixels_to_coords(self.rect.center) == xy:
+        if self.coords == xy:
             del self.route[0]           
             self.dest = None 
             return
         
+        # print(xy, self.coords, end="   ")
+        
         xy = coords_to_pixels(xy)
+        # print(xy, self.pixels)
         self.dest = xy
 
     def walk_to(self, xy: tuple[int, int]):
         if not xy:
             return
 
-        vector = pygame.Vector2()
         dx, dy = xy[0] - self.rect.center[0], xy[1] - self.rect.center[1]
-        vector.xy = dx, dy
 
         if dx == 0 and dy == 0:
             return
+
+        vector = pygame.Vector2()
+        vector.xy = dx, dy
 
         vector = vector.normalize() * self.speed
 
@@ -91,11 +95,10 @@ class Professor(pygame.sprite.Sprite):
 
     def update_destination(self, matrix, destination: tuple[int, int]):
         if self.seen and (len(self.route) <= 0 or self.route[-1] != destination):
-            coords = pixels_to_coords(self.rect.center)
+            # print("UPDATE", self.coords, destination)
+            # print(self.route)
 
-            print(coords, destination)
-
-            self.route = backtracker(matrix, coords, destination)
+            self.route = backtracker(matrix, self.coords, destination, path=self.route)
 
     def update(self):
         if len(self.route) > 0:

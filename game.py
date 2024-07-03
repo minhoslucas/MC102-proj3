@@ -150,7 +150,7 @@ class Game:
         if self.over:
             self.map = random.choice(self.all_mazes)
         elif (not self.map) or (self.map not in mazes):
-            self.map = mazes[2]
+            self.map = random.choice(self.all_mazes)
 
         matrix = self.map.matrix
 
