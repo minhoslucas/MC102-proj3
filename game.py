@@ -5,18 +5,20 @@ from maze import mazes, MazeTemplate
 from Obstacles import Wall, UnbreakableWall, Entrance, Exit, Floor
 from Items import Points, Life, Time
 from professor import Professor
+from inventory import Inventory
 from classmate.classmate import Classmate
 from classmate.reader import classmate_sprites_list
 import random
 
 
 class Game:
-    def __init__(self, map = None, win = False, pause = False, over = False, difficulty = 50, time = 0):
+    def __init__(self, map = None, win = False, pause = False, over = False, difficulty = 50, time = 0, level = 1):
         self._map = map
         self._win = win
         self._pause = pause
         self._over = over
         self._time = time
+        self._level = level
         self.all_mazes = mazes.copy()
         self.extra_time = 0
         self._difficulty = difficulty
@@ -31,6 +33,15 @@ class Game:
         self.time_item = pygame.sprite.Group()
         self.professor_group = pygame.sprite.Group()
         self.classmate_group = pygame.sprite.Group()
+        self.inventory_slot_group = pygame.sprite.Group()
+        self.inventory_slot = Inventory()
+
+    @property
+    def level(self):
+        return self._level
+    @level.setter
+    def level(self, level):
+        self._level = level
 
     @property
     def over(self):
@@ -115,8 +126,23 @@ class Game:
             life_surf = pygame.image.load(path.join(surface_path, 'life_count_2.png')).convert_alpha()
         elif life_count == 1:
             life_surf = pygame.image.load(path.join(surface_path, 'life_count_1.png')).convert_alpha()
+        else:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_0.png')).convert_alpha()
         life_rect = life_surf.get_rect(midleft = (200, 40))
         screen.blit(life_surf, life_rect)
+
+    def set_wallpaper(self, screen):
+        wallpaper_surf = pygame.image.load(path.join('assets', 'images', 'background_tile.png'))
+        for i in range(20):
+            for j in range(16):
+                wallpaper_rect = wallpaper_surf.get_rect(center = (i*50 + 25, j*50 + 25))
+                screen.blit(wallpaper_surf, wallpaper_rect)
+
+    def display_level(self, screen):
+        text_font = pygame.font.Font(None, 30)
+        level_surf = text_font.render(f'Level: {self.level}', True, 'White')
+        level_rect = level_surf.get_rect(center = (75, 735))
+        screen.blit(level_surf, level_rect)
 
     def _place_map(self):
         if self.over:
@@ -196,11 +222,20 @@ class Game:
         for ind, pos in enumerate(classmate_pos):
             self.map.matrix[pos[1][0]][pos[1][1]] = 'c'
             self.classmate_group.add(Classmate(pos[0], classmate_sprites[ind]))
+
+    def _load_inventory_slot(self):
+        self.inventory_slot_group.add(self.inventory_slot)
+
+    # def update_matrix(self, matrix):
+    #     for line_index, line in enumerate(matrix):
+    #         for tile_index, tile in enumerate(line):
+
     
     def place_game(self):
         self._place_map()
         self._place_entities()
         self._place_items()
+        self._load_inventory_slot()
 
     def _clear_groups(self):
         self.classmate_group.empty()
@@ -211,6 +246,7 @@ class Game:
         self.points_item.empty()
         self.lifes_item.empty()
         self.time_item.empty()
+        self.inventory_slot.empty()
         self.floor_coord_list = []
     
     def _remove_maze(self):
@@ -226,6 +262,7 @@ class Game:
         self.professor_group.empty()
         self.points_item.empty()
         self.lifes_item.empty()
+        self.inventory_slot.empty()
         self.time_item.empty()
         self.floor_coord_list = []
         self.place_game()
@@ -236,6 +273,7 @@ class Game:
         self.points_item.empty()
         self.lifes_item.empty()
         self.time_item.empty()
+        self.inventory_slot.empty()
         self.place_game()
 
     def start(self):

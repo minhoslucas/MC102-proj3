@@ -48,8 +48,9 @@ class Explosion(pygame.sprite.Sprite):
 class ActiveBomb(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
+        self.image = pygame.Surface((20, 20))
         self.image = pygame.image.load(path.join(imagePath, 'black_bomb_sprite.png')).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (15, 20))
+        self.image = pygame.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         self.start_time = 0
         self.active = False
@@ -71,7 +72,8 @@ class ActiveBomb(pygame.sprite.Sprite):
                 self.deactivate()
             elif (delta >= 2500 and delta < 3000) or (delta >= 1500 and delta < 2000) or (delta >= 500 and delta < 1000):
                 self.image = pygame.image.load(path.join(imagePath, 'red_bomb_sprite.png')).convert_alpha()
-                self.image = pygame.transform.scale(self.image, (15, 20))
+                self.image = pygame.transform.scale(self.image, (20, 20))
+
             elif (delta >= 1000 and delta < 1500) or (delta >= 2000 and delta < 2500):
                 self.image = pygame.image.load(path.join(imagePath, 'black_bomb_sprite.png')).convert_alpha()
-                self.image = pygame.transform.scale(self.image, (15, 20))
+                self.image = pygame.transform.scale(self.image, (20, 20))

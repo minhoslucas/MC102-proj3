@@ -78,12 +78,13 @@ class Player(pygame.sprite.Sprite):
         if vector.xy != (0, 0):
             vector = vector.normalize() * 3
             self.check_wall_colisions(vector)
-            self.animate(0, vector.x)
-            self.animate(1, vector.y)
+            self.set_animation_sprite(0, vector.x)
+            self.set_animation_sprite(1, vector.y)
 
         if keys[pygame.K_SPACE]:
-            if self.bomb_cooldown == 0:
+            if self.bomb_cooldown == 0 and game.inventory_slot.bomb_count > 0:
                 self.place_bomb()
+                game.inventory_slot.bomb_count -= 1
 
         if keys[pygame.K_ESCAPE]:
             game.pause = True
@@ -176,6 +177,7 @@ class Player(pygame.sprite.Sprite):
         bomb.activate()
 
         self.bomb_cooldown = 1
+        
 
     #Ativa o timer de invincibilidade
     def activate_timer(self):
@@ -191,51 +193,33 @@ class Player(pygame.sprite.Sprite):
                 self.start_time = 0
                 self.invincible = False
 
-    def animate(self, axis, movement):
+    def _animate(self, path_list: tuple[str, str, str], time: int, flip: bool = False):
+        if (time%400 >= 0 and time%400 < 100) or (time%400 >= 200 and time%400 < 300): 
+            self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, path_list[0]))
+            if flip: self.image = pygame.transform.flip(self.image, True, False)
+            self.image = pygame.transform.scale(self.image, (25, 25))
+        elif (time%400 >= 100 and time%400 < 200):
+            self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, path_list[1]))
+            if flip: self.image = pygame.transform.flip(self.image, True, False)
+            self.image = pygame.transform.scale(self.image, (25, 25))
+        elif (time%400 >= 300 and time%400 < 400):
+            self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, path_list[2]))
+            if flip: self.image = pygame.transform.flip(self.image, True, False)
+            self.image = pygame.transform.scale(self.image, (25, 25))
+    def set_animation_sprite(self, axis, movement):
         time = pygame.time.get_ticks()
         if axis == 0 and movement < 0:
-            if (time%1000 >= 0 and time%1000 < 150) or (time%1000 >= 700 and time%1000 < 850) or (time%1000 >= 300 and time%1000 < 450): 
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_still.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-            elif (time%1000 >= 150 and time%1000 < 300) or (time%1000 >= 850 and time < 1000):
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_1.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-            elif (time%1000 >= 450 and time%1000 < 700):
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_2.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
+            path_list = ('player_left_still.png', 'player_left_frame_1.png', 'player_left_frame_2.png')
+            self._animate(path_list, time)
         elif axis == 0 and movement > 0:
-            if (time%1000 >= 0 and time%1000 < 150) or (time%1000 >= 700 and time%1000 < 850) or (time%1000 >= 300 and time%1000 < 450): 
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_still.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-                self.image = pygame.transform.flip(self.image, True, False)
-            elif (time%1000 >= 150 and time%1000 < 300) or (time%1000 >= 850 and time < 1000):
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_1.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-                self.image = pygame.transform.flip(self.image, True, False)
-            elif (time%1000 >= 450 and time%1000 < 700):
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_2.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-                self.image = pygame.transform.flip(self.image, True, False)
+            path_list = ('player_left_still.png', 'player_left_frame_1.png', 'player_left_frame_2.png')
+            self._animate(path_list, time, True)
         elif axis == 1 and movement > 0:
-            if (time%1000 >= 0 and time%1000 < 200) or (time%1000 >= 400 and time%1000 < 600): 
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_bot_still.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-            elif (time%1000 >= 200 and time%1000 < 400) or (time%1000 >= 800 and time < 1000): 
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_bot_frame_1.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-            elif (time%1000 >= 600 and time%1000 < 800): 
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_bot_frame_2.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
+            path_list = ('player_bot_still.png', 'player_bot_frame_1.png', 'player_bot_frame_2.png')
+            self._animate(path_list, time)
         elif axis == 1 and movement < 0:
-            if (time%1000 >= 0 and time%1000 < 150) or (time%1000 >= 700 and time%1000 < 850) or (time%1000 >= 300 and time%1000 < 450): 
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_top_still.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-            elif (time%1000 >= 150 and time%1000 < 300) or (time%1000 >= 850 and time < 1000):
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_top_frame_1.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
-            elif (time%1000 >= 450 and time%1000 < 700):
-                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_top_frame_2.png'))
-                self.image = pygame.transform.scale(self.image, (25, 25))
+            path_list = ('player_top_still.png', 'player_top_frame_1.png', 'player_top_frame_2.png')
+            self._animate(path_list, time)
         
     def place_player(self, xy: tuple[int, int]):
         self.rect.center = xy
@@ -271,13 +255,6 @@ def display_coords():
     coords_rect = coords_surf.get_rect(center = (475, 50))
     screen.blit(coords_surf, coords_rect)
 
-def set_wallpaper():
-    wallpaper_surf = pygame.image.load(path.join('assets', 'images', 'background_tile.png'))
-    for i in range(20):
-        for j in range(16):
-            wallpaper_rect = wallpaper_surf.get_rect(center = (i*50 + 25, j*50 + 25))
-            screen.blit(wallpaper_surf, wallpaper_rect)
-
 #Desenha a tela de GAME OVER
 def display_game_over():
     text_font = pygame.font.Font(None, 100)
@@ -290,12 +267,6 @@ def display_title():
     title_surf = text_font.render('Os Labirintos da Unicamp', True, 'White')
     title_rect = title_surf.get_rect(center = (500, 188))
     screen.blit(title_surf, title_rect)
-
-def display_level():
-    text_font = pygame.font.Font(None, 30)
-    level_surf = text_font.render(f'Level: {level}', True, 'White')
-    level_rect = level_surf.get_rect(center = (75, 750))
-    screen.blit(level_surf, level_rect)
 
 def display_difficulty():
     text_font = pygame.font.Font(None, 50)
@@ -355,7 +326,6 @@ game_over = False
 main_menu = True
 pause_menu = False
 difficulty_menu = False
-level = 1
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 clock = pygame.time.Clock()
@@ -418,7 +388,7 @@ while True:
                     exit()
 
             #Plota na tela o plano de fundo e o chão
-            set_wallpaper()  
+            game.set_wallpaper(screen)  
             game.floors.draw(screen)
 
             #Atualiza player e o timer da bomba/explosão
@@ -433,6 +403,8 @@ while True:
             game.points_item.draw(screen)
             game.lifes_item.draw(screen)
             game.time_item.draw(screen)
+            game.inventory_slot_group.draw(screen)
+            game.inventory_slot.display_bomb_count(screen)
             bombs_item.draw(screen)
             explosions.draw(screen)
             game.professor_group.draw(screen)
@@ -448,11 +420,11 @@ while True:
             display_score()
             game.display_life_count(screen, player_class.life)
             display_coords()
-            display_level()
+            game.display_level(screen)
             game.display_timer(screen=screen, start_time=start_time) #Tempo em segundos, por padrão, 2 minutos
             #critérios para GAME OVER
             if game.over: 
-                level = 1
+                game.level = 1
                 game_over = True
                 game_active = False
                 break
@@ -465,7 +437,7 @@ while True:
 
             #checa se player está na saída
             if game.win:
-                level += 1
+                game.level += 1
                 break
                 
 
@@ -486,7 +458,7 @@ while True:
                     exit()
 
             #Plota na tela o plano de fundo
-            set_wallpaper()  
+            game.set_wallpaper(screen)  
 
             #Desenha a tela de GAME OVER
             display_game_over()
@@ -520,7 +492,7 @@ while True:
                     exit()
 
             #plota o plano de fundo e o título do jogo
-            set_wallpaper()  
+            game.set_wallpaper(screen)  
             display_title()
 
             #atualiza o estado dos botões
@@ -558,7 +530,7 @@ while True:
                     exit()
 
             #plota o plano de fundo
-            set_wallpaper()
+            game.set_wallpaper(screen)
 
             #atualiza o estado dos botões
             pause_menu_class.pause_buttons.update()
@@ -593,7 +565,7 @@ while True:
                     pygame.quit()
                     exit()
 
-            set_wallpaper()
+            game.set_wallpaper(screen)
             display_difficulty()
 
             difficulty_menu_class.difficulty_buttons.update()
