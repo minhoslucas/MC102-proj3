@@ -98,8 +98,12 @@ class Professor(pygame.sprite.Sprite):
             # print("UPDATE", self.coords, destination)
             # print(self.route)
 
-            self.route = backtracker(matrix, self.coords, destination, path=self.route)
+            old_route = self.route
+            self.route = []
 
+            self.route = backtracker(matrix, self.coords, destination, 
+                                     path=old_route)
+            
     def update(self):
         if len(self.route) > 0:
             self.follow_route()

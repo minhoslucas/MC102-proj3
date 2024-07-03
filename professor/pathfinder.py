@@ -1,5 +1,13 @@
 DIRECTIONS = { "R", "U", "L", "D" }
 
+def join_paths(path: list, new_path: list):
+    for i, tile in enumerate(path):
+        if tile in new_path:
+            index = new_path.index(tile)
+            path[i:] = new_path[index:]
+
+    return path
+
 def define_directions(pos: tuple[int, int], destination: tuple[int, int]):
     directions = [None] * 4
     x_delta = destination[0] - pos[0]
@@ -30,20 +38,35 @@ def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
                 destination: tuple[int, int], path: list[tuple[int, int]]=None):
     if path == None or len(path) <= 0:
         path = [initial_pos]
+        new_path = [initial_pos]
+    else:
+        new_path = path[-1:]
+
 
     line_len = len(maze[0])
 
     # print("START", initial_pos, destination)
 
-    if not _backtracker_inner(maze, destination, None, path, first=True):
+
+    if not _backtracker_inner(maze, destination, None, new_path, first=True):
         # print("ERRO", end="")
         # print(initial_pos, destination, end="")
         # i_tile = maze[initial_pos[0]][initial_pos[1]]
         # d_tile = maze[destination[0]][destination[1]]
         # print((i_tile, initial_pos), (d_tile, destination))
         return []
+    
+    print()
 
-    del path[0]
+    print(path)
+    print(new_path)
+
+    for i, tile in enumerate(path):
+        if tile in new_path:
+            index = new_path.index(tile)
+            path[i:] = new_path[index:]
+
+    print([(maze[tile[0]][tile[1]], tile) for tile in path])    
     return path
 
 def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
@@ -62,14 +85,15 @@ def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
     if pos[0] < 0 or pos[1] < 0:
         return False
 
-    if not first and maze[pos[0]][pos[1]] in { "#", "E", "S" }:
+    if maze[pos[0]][pos[1]] in { "#", "E", "S" }:
         return False
 
     if not first and pos in path:
         # print(path)
         return False
-
-    path.append(pos)
+    
+    if direction:
+        path.append(pos)
 
     # print_maze(maze, "caminho.out", pos, time=1)
 

@@ -458,7 +458,7 @@ while True:
 
             game.professor_group.update()
 
-            # print_maze(game.matrix, *prof_coords)
+            print_maze(game.matrix, *prof_coords)
 
             #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()
