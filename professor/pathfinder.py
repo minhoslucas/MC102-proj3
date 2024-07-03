@@ -33,7 +33,8 @@ def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
     directions = define_directions(initial_pos, destination)
 
     if not _backtracker_inner(maze, destination, None, path, directions, first=True):
-        raise ValueError("nao ta tendo :c e etc")
+        print("nao ta tendo :c e etc")
+        return []
 
     del path[0]
     return path
@@ -53,6 +54,8 @@ def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
 
     if pos[0] < 0 or pos[1] < 0:
         return False
+    
+    print(pos)
 
     if maze[pos[1]][pos[0]] == "#":
         return False
@@ -61,9 +64,8 @@ def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
         return False
 
     path.append(pos)
-    # print(path)
 
-    if maze[pos[1]][pos[0]] == "S" or pos == destination:
+    if pos == destination:
         return True
 
     for next_direction in directions:

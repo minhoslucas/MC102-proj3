@@ -419,7 +419,7 @@ while True:
             for professor in game.professor_group:
                 line = pygame.draw.line(screen, "#ffffffdd", 
                                         professor.rect.center, 
-                                        player_class.rect.center, width=5)
+                                        player_class.rect.center)
                 
                 has_sight = True
 

@@ -15,6 +15,18 @@ class Professor(pygame.sprite.Sprite):
     direction: bool
     speed: int
     route: list[int, int]
+    dest: tuple[int, int]
+    _seen: bool
+
+    @property
+    def seen(self):
+        return self._seen
+
+    @seen.setter
+    def seen(self, value):
+        if (not self.seen) and value:
+            self._seen = True
+            print("FOUND YOU")
 
     @property
     def coords(self):
@@ -31,22 +43,30 @@ class Professor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         self.direction = True
         self.speed = speed
+        self.dest = None
         self.route = []
+        self._seen = False
 
     def follow_route(self):
+        if not self.seen:
+            return
+
         if len(self.route) <= 0:
             return
 
         xy = self.route[0]
 
         if pixels_to_coords(self.rect.center) == xy:
-            del self.route[0]            
+            del self.route[0]           
+            self.dest = None 
             return
         
         xy = coords_to_pixels(xy)
-        self.walk_to(xy)
+        self.dest = xy
 
     def walk_to(self, xy: tuple[int, int]):
+        if not xy:
+            return
 
         vector = pygame.Vector2()
         dx, dy = xy[0] - self.rect.center[0], xy[1] - self.rect.center[1]
@@ -70,17 +90,15 @@ class Professor(pygame.sprite.Sprite):
         self.rect.center += vector
 
     def update_destination(self, matrix, destination: tuple[int, int]):
-        if len(self.route) <= 0 or self.route[-1] != destination:
+        if self.seen and (len(self.route) <= 0 or self.route[-1] != destination):
             coords = pixels_to_coords(self.rect.center)
 
-            self.route = backtracker(matrix, pixels_to_coords(self.rect.center), 
-                                     destination)
+            print(coords, destination)
+
+            self.route = backtracker(matrix, coords, destination)
 
     def update(self):
-        if len(self.route) == 0:
-            return
-
         if len(self.route) > 0:
             self.follow_route()
-        elif self.matrix_coords == self.route[-1]:
-            self.route = []
+
+        self.walk_to(self.dest)
