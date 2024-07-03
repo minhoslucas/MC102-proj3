@@ -204,15 +204,15 @@ class Game:
         if self.difficulty >= 70:
             num_prof = 4
             num_class = 4
-            prof_speed = 4
+            prof_speed = 3
         elif self.difficulty < 70 and self.difficulty >= 30:
             num_prof = 3
             num_class = 4
-            prof_speed = 3
+            prof_speed = 2
         else:
             num_prof = 2
             num_class = 3
-            prof_speed = 2
+            prof_speed = 1
 
         professor_pos = random.sample(self.floor_coord_list, num_prof)
         for pos in professor_pos:
