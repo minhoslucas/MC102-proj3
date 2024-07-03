@@ -1,9 +1,12 @@
 import pygame
+from os import path
+from itertools import chain
 from maze import mazes, MazeTemplate
 from Obstacles import Wall, UnbreakableWall, Entrance, Exit, Floor
 from Items import Points, Life, Time
 from professor import Professor
-from classmate import Classmate
+from classmate.classmate import Classmate
+from classmate.reader import classmate_sprites_list
 import random
 
 
@@ -98,6 +101,23 @@ class Game:
         timer_rect = timer_surf.get_rect(center = (675, 50))
         screen.blit(timer_surf, timer_rect)
 
+    def display_life_count(self, screen, life_count):
+        surface_path = path.join('assets', 'images', 'life_count_sprites')
+        if life_count == 6:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_6.png')).convert_alpha()
+        elif life_count == 5:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_5.png')).convert_alpha()
+        elif life_count == 4:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_4.png')).convert_alpha()
+        elif life_count == 3:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_3.png')).convert_alpha()
+        elif life_count == 2:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_2.png')).convert_alpha()
+        elif life_count == 1:
+            life_surf = pygame.image.load(path.join(surface_path, 'life_count_1.png')).convert_alpha()
+        life_rect = life_surf.get_rect(midleft = (200, 40))
+        screen.blit(life_surf, life_rect)
+
     def _place_map(self):
         if self.over:
             self.map = random.choice(self.all_mazes)
@@ -138,19 +158,19 @@ class Game:
             self.floor_coord_list.remove(pos)
             self.map.matrix[pos[1][0]][pos[1][1]] = 'P'
             self.points_item.add(Points(pos[0]))
-            print(f'points_pos: {pos}')
+
         lifes_pos = random.sample(self.floor_coord_list, 5)
         for pos in lifes_pos:
             self.floor_coord_list.remove(pos)
             self.map.matrix[pos[1][0]][pos[1][1]] = 'L'
             self.lifes_item.add(Life(pos[0]))
-            print(f'lifes_pos: {pos}')
+
         time_pos = random.sample(self.floor_coord_list, 3)
         for pos in time_pos:
             self.floor_coord_list.remove(pos)
             self.map.matrix[pos[1][0]][pos[1][1]] = 'T'
             self.time_item.add(Time(pos[0]))
-            print(f'time_pos: {pos}')
+
 
     def _place_entities(self):
         if self.difficulty >= 70:
@@ -172,9 +192,10 @@ class Game:
             self.professor_group.add(Professor(pos[0], prof_speed))
 
         classmate_pos = random.sample(self.floor_coord_list, num_class)
-        for pos in classmate_pos:
+        classmate_sprites = random.sample(classmate_sprites_list, num_class)
+        for ind, pos in enumerate(classmate_pos):
             self.map.matrix[pos[1][0]][pos[1][1]] = 'c'
-            self.classmate_group.add(Classmate(pos[0]))
+            self.classmate_group.add(Classmate(pos[0], classmate_sprites[ind]))
     
     def place_game(self):
         self._place_map()

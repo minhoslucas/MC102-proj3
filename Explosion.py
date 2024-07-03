@@ -7,7 +7,6 @@ class Explosion(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):
         super().__init__()
         self.image = pygame.Surface((25, 25))
-        self.image.fill('Red')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         self.explosion_animation = False
         self.explosion_hitbox = False
@@ -28,7 +27,19 @@ class Explosion(pygame.sprite.Sprite):
             current_time = pygame.time.get_ticks()
             delta_animation = current_time - self.animation_start_time
             delta_hitbox = current_time - self.explosion_animation_start_time
-            if delta_animation >= 500:
+            if delta_animation >= 10 and delta_animation < 92:
+                self.image = pygame.image.load(path.join(imagePath, 'bomb_explosion_frames', 'bomb_frame_1.png')).convert_alpha()
+            elif delta_animation >= 92 and delta_animation < 174:
+                self.image = pygame.image.load(path.join(imagePath, 'bomb_explosion_frames', 'bomb_frame_2.png')).convert_alpha()
+            elif delta_animation >= 174 and delta_animation < 256:
+                self.image = pygame.image.load(path.join(imagePath, 'bomb_explosion_frames', 'bomb_frame_3.png')).convert_alpha()
+            elif delta_animation >= 256 and delta_animation < 338:
+                self.image = pygame.image.load(path.join(imagePath, 'bomb_explosion_frames', 'bomb_frame_4.png')).convert_alpha()
+            elif delta_animation >= 338 and delta_animation < 420:
+                self.image = pygame.image.load(path.join(imagePath, 'bomb_explosion_frames', 'bomb_frame_5.png')).convert_alpha()
+            elif delta_animation > 420 and delta_animation < 500:
+                self.image = pygame.image.load(path.join(imagePath, 'bomb_explosion_frames', 'bomb_frame_6.png')).convert_alpha()
+            else:
                 self.animation_start_time = 0
                 self.explosion_animation = False
             if delta_hitbox >= 10:

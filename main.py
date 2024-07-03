@@ -78,6 +78,8 @@ class Player(pygame.sprite.Sprite):
         if vector.xy != (0, 0):
             vector = vector.normalize() * 3
             self.check_wall_colisions(vector)
+            self.animate(0, vector.x)
+            self.animate(1, vector.y)
 
         if keys[pygame.K_SPACE]:
             if self.bomb_cooldown == 0:
@@ -101,8 +103,7 @@ class Player(pygame.sprite.Sprite):
     def check_wall_colisions(self, vector: pygame.Vector2):
         self._move(vector.x, 0)
         self._move(vector.y, 1)
-
-    def _move(self, movement: int, axis: str):
+    def _move(self, movement: int, axis: int):
         if axis == 0:
             self.rect.x += movement
         else:
@@ -162,7 +163,7 @@ class Player(pygame.sprite.Sprite):
     #Dá dano em player
     def damage(self):
         if not self.invincible:
-            self.life -= 6
+            self.life -= 1
             self.activate_timer()
         
     #Coloca uma bomba no mapa
@@ -190,6 +191,52 @@ class Player(pygame.sprite.Sprite):
                 self.start_time = 0
                 self.invincible = False
 
+    def animate(self, axis, movement):
+        time = pygame.time.get_ticks()
+        if axis == 0 and movement < 0:
+            if (time%1000 >= 0 and time%1000 < 150) or (time%1000 >= 700 and time%1000 < 850) or (time%1000 >= 300 and time%1000 < 450): 
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_still.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+            elif (time%1000 >= 150 and time%1000 < 300) or (time%1000 >= 850 and time < 1000):
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_1.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+            elif (time%1000 >= 450 and time%1000 < 700):
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_2.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+        elif axis == 0 and movement > 0:
+            if (time%1000 >= 0 and time%1000 < 150) or (time%1000 >= 700 and time%1000 < 850) or (time%1000 >= 300 and time%1000 < 450): 
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_still.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+                self.image = pygame.transform.flip(self.image, True, False)
+            elif (time%1000 >= 150 and time%1000 < 300) or (time%1000 >= 850 and time < 1000):
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_1.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+                self.image = pygame.transform.flip(self.image, True, False)
+            elif (time%1000 >= 450 and time%1000 < 700):
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_left_frame_2.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+                self.image = pygame.transform.flip(self.image, True, False)
+        elif axis == 1 and movement > 0:
+            if (time%1000 >= 0 and time%1000 < 200) or (time%1000 >= 400 and time%1000 < 600): 
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_bot_still.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+            elif (time%1000 >= 200 and time%1000 < 400) or (time%1000 >= 800 and time < 1000): 
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_bot_frame_1.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+            elif (time%1000 >= 600 and time%1000 < 800): 
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_bot_frame_2.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+        elif axis == 1 and movement < 0:
+            if (time%1000 >= 0 and time%1000 < 150) or (time%1000 >= 700 and time%1000 < 850) or (time%1000 >= 300 and time%1000 < 450): 
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_top_still.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+            elif (time%1000 >= 150 and time%1000 < 300) or (time%1000 >= 850 and time < 1000):
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_top_frame_1.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+            elif (time%1000 >= 450 and time%1000 < 700):
+                self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, 'player_top_frame_2.png'))
+                self.image = pygame.transform.scale(self.image, (25, 25))
+        
     def place_player(self, xy: tuple[int, int]):
         self.rect.center = xy
 
@@ -223,13 +270,6 @@ def display_coords():
     coords_surf = text_font.render(f'Coords: {player_class.coords}', True, 'White')
     coords_rect = coords_surf.get_rect(center = (475, 50))
     screen.blit(coords_surf, coords_rect)
-
-#Desenha a contagem de vidas na tela
-def display_life_count():
-    text_font = pygame.font.Font(None, 30)
-    life_surf = text_font.render(f'Life Count: {player_class.life}', True, 'White')
-    life_rect = life_surf.get_rect(center = (275, 50))
-    screen.blit(life_surf, life_rect)
 
 def set_wallpaper():
     wallpaper_surf = pygame.image.load(path.join('assets', 'images', 'background_tile.png'))
@@ -305,6 +345,7 @@ def kill_bomb():
 
 SCREEN_WIDTH = 1000
 SCREEN_HIGHT = 775
+PLAYER_SPRITES_FOLDER = path.join('assets', 'images', 'player_sprites')
 
 pygame.init()
 
@@ -405,7 +446,7 @@ while True:
 
             #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()
-            display_life_count()
+            game.display_life_count(screen, player_class.life)
             display_coords()
             display_level()
             game.display_timer(screen=screen, start_time=start_time) #Tempo em segundos, por padrão, 2 minutos
