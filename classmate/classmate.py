@@ -6,4 +6,3 @@ class Classmate(pygame.sprite.Sprite):
         self.image = pygame.image.load(sprite).convert_alpha()
         self.image = pygame.transform.scale(self.image, (25, 25))
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
-        
