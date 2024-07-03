@@ -9,6 +9,8 @@ from classmate.classmate import Classmate
 from classmate.reader import classmate_sprites_list
 import random
 
+def load(*args):
+    return pygame.image.load(path.join(*args)).convert_alpha()
 
 class Game:
     def __init__(self, map = None, win = False, pause = False, over = False, difficulty = 50, time = 0):
@@ -103,18 +105,7 @@ class Game:
 
     def display_life_count(self, screen, life_count):
         surface_path = path.join('assets', 'images', 'life_count_sprites')
-        if life_count == 6:
-            life_surf = pygame.image.load(path.join(surface_path, 'life_count_6.png')).convert_alpha()
-        elif life_count == 5:
-            life_surf = pygame.image.load(path.join(surface_path, 'life_count_5.png')).convert_alpha()
-        elif life_count == 4:
-            life_surf = pygame.image.load(path.join(surface_path, 'life_count_4.png')).convert_alpha()
-        elif life_count == 3:
-            life_surf = pygame.image.load(path.join(surface_path, 'life_count_3.png')).convert_alpha()
-        elif life_count == 2:
-            life_surf = pygame.image.load(path.join(surface_path, 'life_count_2.png')).convert_alpha()
-        elif life_count == 1:
-            life_surf = pygame.image.load(path.join(surface_path, 'life_count_1.png')).convert_alpha()
+        life_surf = load(surface_path, f'life_count_{life_count}.png')
         life_rect = life_surf.get_rect(midleft = (200, 40))
         screen.blit(life_surf, life_rect)
 
