@@ -297,6 +297,7 @@ def explosion_damage():
                 coords = wall.wall_coords
                 pygame.sprite.Sprite.kill(wall)
                 game.floors.add(Floor(coords))
+                game.update_matrix(coords)
 
 #Mata a explosão depos que acabar o timer dela
 def kill_explosion():

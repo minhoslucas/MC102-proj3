@@ -8,7 +8,7 @@ class Wall(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(path.join(imagePath, 'wall.png')).convert()
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
-        self.wall_coords = (pos[0], pos[1])
+        self.wall_coords = pos
 
 class UnbreakableWall(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):
@@ -21,6 +21,7 @@ class Floor(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(path.join(imagePath, 'floor_tile.png')).convert()
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
+        self.floor_coords = pos
 
 class Entrance(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):

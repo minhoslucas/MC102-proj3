@@ -215,10 +215,13 @@ class Game:
     def _load_inventory_slot(self):
         self.inventory_slot_group.add(self.inventory_slot)
 
-    # def update_matrix(self, matrix):
-    #     for line_index, line in enumerate(matrix):
-    #         for tile_index, tile in enumerate(line):
-
+    def update_matrix(self, coords):
+        matrix = self.map.matrix
+        for line_index, line in enumerate(matrix):
+            for tile_index, tile in enumerate(line):
+                if tile == '#' and self._pixels_to_coords(coords) == (tile_index, line_index):
+                    tile = ' '
+                    self.map.matrix = matrix
     
     def place_game(self):
         self._place_map()
@@ -235,7 +238,7 @@ class Game:
         self.points_item.empty()
         self.lifes_item.empty()
         self.time_item.empty()
-        self.inventory_slot.empty()
+        self.inventory_slot_group.empty()
         self.floor_coord_list = []
     
     def _remove_maze(self):
@@ -251,7 +254,7 @@ class Game:
         self.professor_group.empty()
         self.points_item.empty()
         self.lifes_item.empty()
-        self.inventory_slot.empty()
+        self.inventory_slot_group.empty()
         self.time_item.empty()
         self.floor_coord_list = []
         self.place_game()
@@ -262,7 +265,7 @@ class Game:
         self.points_item.empty()
         self.lifes_item.empty()
         self.time_item.empty()
-        self.inventory_slot.empty()
+        self.inventory_slot_group.empty()
         self.place_game()
 
     def start(self):
