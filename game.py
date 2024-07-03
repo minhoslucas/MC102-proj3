@@ -1,4 +1,5 @@
 import pygame
+from pygame.sprite import Group, GroupSingle
 from os import path
 from itertools import chain
 from maze import mazes, MazeTemplate
@@ -14,6 +15,13 @@ def load(*args):
     return pygame.image.load(path.join(*args)).convert_alpha()
 
 class Game:
+    _map: MazeTemplate
+    walls: Group
+    map_borders: Group
+    floors: Group
+    professor_group: Group
+    classmate_group: Group
+
     def __init__(self, map = None, win = False, pause = False, over = False, difficulty = 50, time = 0, level = 1):
         self._map = map
         self._win = win
@@ -37,6 +45,11 @@ class Game:
         self.classmate_group = pygame.sprite.Group()
         self.inventory_slot_group = pygame.sprite.Group()
         self.inventory_slot = Inventory()
+
+
+    @property
+    def matrix(self):
+        return self._map.matrix
 
     @property
     def level(self):

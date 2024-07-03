@@ -329,6 +329,8 @@ pause_menu = False
 difficulty_menu = False
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
+transparent = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+
 clock = pygame.time.Clock()
 pygame.display.set_caption('Os Labirintos da Unicamp')
 
@@ -397,6 +399,8 @@ while True:
             bombs_item.update()
             explosions.update()
 
+            
+
             #Plota as coisas dependendo da matriz e desenha player
             game.walls.draw(screen)
             game.map_borders.draw(screen)
@@ -413,7 +417,23 @@ while True:
 
             #professor
             for professor in game.professor_group:
-                professor.dest = player_class.rect.center
+                line = pygame.draw.line(screen, "#ffffffdd", 
+                                        professor.rect.center, 
+                                        player_class.rect.center, width=5)
+                
+                has_sight = True
+
+                for wall in game.walls.sprites():
+                    if line.colliderect(wall.rect):
+                        has_sight = False
+                        break
+
+                if has_sight:
+                    professor.seen = True
+                    professor.route = []
+                    professor.dest = player_class.rect.center
+                else:
+                    professor.update_destination(game.matrix, player_class.coords)
 
             game.professor_group.update()
 
