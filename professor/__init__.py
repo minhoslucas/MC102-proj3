@@ -1,6 +1,8 @@
 import pygame
 from professor.pathfinder import backtracker
 
+from Tile import Tile
+
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
     y = round((xy[1] - 87.5) // 25)
@@ -11,7 +13,7 @@ def coords_to_pixels(xy: tuple[int, int]):
     y = xy[0] * 25 + 87.5
     return x, y
         
-class Professor(pygame.sprite.Sprite):
+class Professor(Tile):
     direction: bool
     speed: int
     route: list[int, int]
@@ -37,10 +39,8 @@ class Professor(pygame.sprite.Sprite):
         return pixels_to_coords(self.pixels)
 
     def __init__(self, pos: tuple[int, int], speed = 2):
-        super().__init__()
-        self.image = pygame.Surface((11, 11))
+        super().__init__(pos, size=11)
         self.image.fill("Blue")
-        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         self.direction = True
         self.speed = speed
         self.dest = None
