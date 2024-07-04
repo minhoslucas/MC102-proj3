@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from question import reader
-from random import randrange, shuffle
+from random import randrange, shuffle, choice
 
 @dataclass
 class Question:
@@ -22,20 +22,20 @@ questions: dict[int, list[Question]] = \
      for difficulty, qList in reader.questions.items()}
 
 def select_question(difficulty: int) -> Question:
-    print(difficulty)
+    # print(difficulty)
 
     if difficulty not in questions:
-        return None
+        print("NOT FOUND, SEARCHING ANOTHER...")
+        difficulty = choice(list(questions.keys()))
 
     pool = questions[difficulty]
-
-    if len(pool) <= 0:
-        return None
-
     index = randrange(0, len(pool))
     
     question = pool.pop(index)
     question.shuffle()
+
+    if len(pool) == 0:
+        del questions[difficulty]
 
     return question
 
