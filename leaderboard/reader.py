@@ -4,7 +4,7 @@ from io import TextIOWrapper
 
 LEADERBOARD_PATH = os.path.join("data", "leaderboard.yml")
 
-def read():
+def read() -> dict[int, dict[str, dict]]:
     if not os.path.isfile(LEADERBOARD_PATH):
         return {}
 
