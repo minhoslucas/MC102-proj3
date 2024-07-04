@@ -484,10 +484,20 @@ while True:
             prof_coords = [player_class.coords]
 
             for professor in game.professor_group:
+                prof_coords.append(professor.coords)
+
+                if not professor.seen:
+                    circle = pygame.draw.circle(transparent, "#ffffffdd", 
+                                                professor.rect.center, 200, 0)
+
+                    if circle.colliderect(player_class.rect):
+                        professor.seen = True
+
+                    continue
+
                 line = pygame.draw.line(transparent, "#ffffffdd", 
                                         professor.rect.center, 
                                         player_class.rect.center)
-                
                 has_sight = True
 
                 for wall in game.walls.sprites():
@@ -496,13 +506,10 @@ while True:
                         break
 
                 if has_sight:
-                    professor.seen = True
                     professor.route = []
                     professor.dest = player_class.rect.center
                 else:
                     professor.update_destination(game.matrix, player_class.coords)
-
-                prof_coords.append(professor.coords)
 
             game.professor_group.update()
 
