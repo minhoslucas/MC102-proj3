@@ -318,8 +318,14 @@ def display_game_over():
 def display_you_win():
     text_font = pygame.font.Font(FONT_PATH, 60)
     you_win_surf = text_font.render('YOU WIN!', False, 'White')
-    you_win_rect = you_win_surf.get_rect(center = (500, 288))
+    you_win_rect = you_win_surf.get_rect(center = (500, 80))
     screen.blit(you_win_surf, you_win_rect)
+
+def display_new_highscore():
+    text_font = pygame.font.Font(FONT_PATH, 20)
+    new_highscore_surf = text_font.render('NEW HIGHSCORE', False, 'White')
+    new_highscore_rect = new_highscore_surf.get_rect(center = (500, 140))
+    screen.blit(new_highscore_surf, new_highscore_rect)
 
 def display_title():
     text_font = pygame.font.Font(FONT_PATH, 50)
@@ -717,7 +723,7 @@ while True:
             pygame.display.update()
             clock.tick(60)                               
     elif leaderboard_menu:
-        new_score = Score("Player", time=game.time, score=player_class.points, maze=game.level)
+        new_score = Score("Pedro", time=game.time, score=player_class.points, maze=game.level)
         is_high_score = new_score.save()
 
         scores = leaderboard()
@@ -734,6 +740,9 @@ while True:
             leaderboard_menu_class.leaderboard_buttons.update()
             leaderboard_menu_class.leaderboard_buttons.draw(screen)
             leaderboard_menu_class.display_scores(screen, scores[2])
+
+            if is_high_score:
+                display_new_highscore()
 
             if leaderboard_menu_class.main_menu_button.is_clicked:
                 pygame.quit()
