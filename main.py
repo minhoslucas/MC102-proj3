@@ -297,7 +297,7 @@ class Player(pygame.sprite.Sprite):
 def display_score():
     text_font = pygame.font.Font(FONT_PATH, 20)
     score_surf = text_font.render(f'Score: {player_class.points}', False, 'White')
-    score_rect = score_surf.get_rect(center = (75, 50))
+    score_rect = score_surf.get_rect(center = (90, 50))
     screen.blit(score_surf, score_rect)
 
 #Desenha as coordenadas na tela
