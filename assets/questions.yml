@@ -1,9 +1,720 @@
 questions:
-  - question: Qual o algorítmo de sorting usado pela função sorted()?
-    choices:
-      - Insertion Sort
-      - Tim Sort
-      - Merge Sort
-      - Quick Sort
-    answer: Tim Sort
-    difficulty: 3
+  - question: O que é Python?
+      choices:
+        - Uma linguagem de programação de alto nível, interpretada e de propósito geral.
+        - Um sistema operacional.
+        - Um compilador de código.
+        - Uma biblioteca para matemática computacional.
+      answer: Uma linguagem de programação de alto nível, interpretada e de propósito geral.
+      difficulty: 1
+
+  - question: Qual é o operador utilizado em Python para realizar uma divisão inteira?
+      choices:
+        - /
+        - %
+        - //
+        - *
+      answer: //
+      difficulty: 1
+
+  - question: Como se verifica se um valor está presente em uma lista em Python?
+      choices:
+        - exists
+        - in_list
+        - contains
+        - in
+      answer: in
+      difficulty: 1
+
+  - question: Qual a estrutura de controle utilizada para decisões em Python?
+      choices:
+        - switch
+        - if-elif-else
+        - decision
+        - case
+      answer: if-elif-else
+      difficulty: 1
+
+  - question: Qual a função utilizada para retornar o tamanho de uma lista em Python?
+      choices:
+        - size()
+        - count()
+        - length()
+        - len()
+      answer: len()
+      difficulty: 1
+
+  - question: Como se realiza a concatenação de strings em Python?
+      choices:
+        - concat()
+        - plus()
+        - concatenate()
+        - +
+      answer: +
+      difficulty: 1
+
+  - question: Qual a diferença entre '=' e '==' em Python?
+      choices:
+        - '=' é o operador de comparação, enquanto '==' é o operador de atribuição.
+        - '=' é o operador de adição, enquanto '==' é o operador de igualdade.
+        - '=' é o operador de atribuição, enquanto '==' é o operador de comparação.
+        - '=' e '==' são operadores equivalentes em Python.
+      answer: '=' é o operador de atribuição, enquanto '==' é o operador de comparação.
+      difficulty: 1
+
+  - question: Que função retorna tanto o item quanto o index de um elemento em uma lista?
+      choices:
+        - enumerate()
+        - range()
+        - len()
+        - index()
+      answer: enumerate()
+      difficulty: 1
+
+  - question: Qual é o método utilizado para ordenar uma lista em Python?
+      choices:
+        - organize()
+        - order()
+        - sorted()
+        - arrange()
+      answer: sorted()
+      difficulty: 1
+
+  - question: Qual a estrutura de dados utilizada para mapeamentos em Python?
+      choices:
+        - list
+        - map
+        - dictionary (dict)
+        - set
+      answer: dictionary (dict).
+      difficulty: 1
+
+  - question: Como se importa um módulo em Python?
+      choices:
+        - include
+        - require
+        - import
+        - use
+      answer: import
+      difficulty: 1
+
+  - question: Qual a função utilizada para gerar um número inteiro aleatório em Python?
+      choices:
+        - random()
+        - randint()
+        - randrange()
+        - random_int()
+      answer: randint()
+      difficulty: 1
+
+  - question: Como se verifica se um elemento está presente em um conjunto (set) em Python?
+      choices:
+        - exists_in_set()
+        - in_set()
+        - contains()
+        - in
+      answer: in
+      difficulty: 1
+
+  - question: Qual a função utilizada para converter um número em uma string em Python?
+      choices:
+        - to_str()
+        - str()
+        - convert_str()
+        - stringify()
+      answer: str()
+      difficulty: 1
+
+  - question: Qual a maneira correta de comentar uma linha em Python?
+      choices:
+        - // Comentário
+        - /* Comentário */
+        - '# Comentário'
+        - -- Comentário
+      answer: '# Comentário'
+      difficulty: 1
+
+  - question: Como se remove o último elemento de uma lista em Python?
+      choices:
+        - pop()
+        - remove_last()
+        - delete()
+        - del
+      answer: pop()
+      difficulty: 1
+
+  - question: Qual a função usada para encontrar o valor máximo em uma lista em Python?
+      choices:
+        - max()
+        - maximum()
+        - find_max()
+        - peak()
+      answer: max()
+      difficulty: 1
+
+  - question: Como se cria uma lista vazia em Python?
+      choices:
+        - '[]' ou list()
+        - create_list()
+        - empty_list()
+        - new_list()
+      answer: '[]'
+      difficulty: 1
+
+  - question: Qual a função utilizada para converter uma string em letras minúsculas em Python?
+      choices:
+        - lower()
+        - to_lower()
+        - lowercase()
+        - str_lower()
+      answer: lower()
+      difficulty: 1
+
+  - question: Como se verifica o tipo de uma variável em Python?
+      choices:
+        - check_type()
+        - type_of()
+        - typeof()
+        - type()
+      answer: type()
+      difficulty: 1
+
+  - question: Qual a função utilizada para encontrar o valor mínimo em uma lista em Python?
+      choices:
+        - min()
+        - minimum()
+        - find_min()
+        - bottom()
+      answer: min()
+      difficulty: 1
+
+  - question: Como se cria um conjunto (set) vazio em Python?
+      choices:
+        - '{}'
+        - set()
+        - new_set()
+        - empty_set()
+      answer: set()
+      difficulty: 1
+
+  - question: Qual a função utilizada para converter um número em uma string em Python?
+      choices:
+        - to_str()
+        - str()
+        - convert_str()
+        - stringify()
+      answer: str()
+      difficulty: 1
+
+  - question: Qual a maneira correta de comentar uma linha em Python?
+      choices:
+        - // Comentário
+        - /* Comentário */
+        - '# Comentário'
+        - -- Comentário
+      answer: '# Comentário'
+      difficulty: 1
+
+  - question: Como se remove o último elemento de uma lista em Python?
+      choices:
+        - pop()
+        - remove_last()
+        - delete()
+        - del
+      answer: pop()
+      difficulty: 1
+
+  - question: Qual a função usada para encontrar o valor máximo em uma lista em Python?
+      choices:
+        - max()
+        - maximum()
+        - find_max()
+        - peak()
+      answer: max()
+      difficulty: 1
+
+  - question: Como se cria uma lista vazia em Python?
+      choices:
+        - '[]' ou list()
+        - create_list()
+        - empty_list()
+        - new_list()
+      answer: '[]'
+      difficulty: 1
+
+  - question: Qual é a função utilizada para calcular o comprimento de uma string em Python?
+      choices:
+        - len()
+        - length()
+        - size()
+        - count()
+      answer: len()
+      difficulty: 2
+
+  - question: Como se verifica se uma chave existe em um dicionário em Python?
+      choices:
+        - check_key()
+        - key_exists()
+        - exists_key()
+        - in
+      answer: in
+      difficulty: 2
+
+  - question: Qual a função utilizada para dividir uma string em uma lista de substrings em Python?
+      choices:
+        - split()
+        - divide()
+        - explode()
+        - substring()
+      answer: split()
+      difficulty: 2
+
+  - question: Como se realiza a cópia de uma lista em Python?
+      choices:
+        - copy()
+        - copy_list()
+        - list_clone()
+        - clone()
+      answer: copy()
+      difficulty: 2
+
+  - question: Qual é a diferença entre métodos e funções em Python?
+      choices:
+        - Métodos pertencem a objetos, enquanto funções não.
+        - Funções pertencem a objetos, enquanto métodos não.
+        - Métodos são definidos fora de classes, enquanto funções são definidas dentro.
+        - Não há diferença entre métodos e funções em Python.
+      answer: Métodos pertencem a objetos, enquanto funções não.
+      difficulty: 2
+
+  - question: Como se converte uma lista em uma tupla em Python?
+      choices:
+        - tuple()
+        - list_to_tuple()
+        - convert_to_tuple()
+        - to_tuple()
+      answer: tuple()
+      difficulty: 2
+
+  - question: Qual é o método utilizado para adicionar um elemento no final de uma lista em Python?
+      choices:
+        - add()
+        - insert()
+        - append()
+        - push()
+      answer: append()
+      difficulty: 2
+
+  - question: Como se verifica se um número é par em Python?
+      choices:
+        - is_even()
+        - even()
+        - num%2 == 0
+        - is_par()
+      answer: num%2 == 0
+      difficulty: 2
+
+  - question: Qual a função utilizada para converter um número em uma string formatada em Python?
+      choices:
+        - format_str()
+        - str_format()
+        - format()
+        - to_str()
+      answer: format()
+      difficulty: 2
+
+  - question: Como se remove um elemento específico de uma lista em Python?
+      choices:
+        - remove()
+        - delete()
+        - pop()
+        - discard()
+      answer: remove()
+      difficulty: 2
+
+  - question: Qual é o operador utilizado para concatenar listas em Python?
+      choices:
+        - concat()
+        - join()
+        - extend()
+        - merge()
+      answer: extend()
+      difficulty: 2
+
+  - question: Qual a maneira correta de verificar se um número é negativo em Python?
+      choices:
+        - is_negative()
+        - < 0
+        - negative()
+        - is_neg()
+      answer: < 0
+      difficulty: 2
+
+  - question: Como se verifica se um valor é verdadeiro em Python?
+      choices:
+        - true()
+        - is_true()
+        - is_true_value()
+        - bool()
+      answer: bool()
+      difficulty: 2
+
+  - question: Qual a função utilizada para encontrar a posição de um elemento em uma lista em Python?
+      choices:
+        - find_index()
+        - index()
+        - get_index()
+        - position()
+      answer: index()
+      difficulty: 2
+
+  - question: Como se realiza a união de dois conjuntos (sets) em Python?
+      choices:
+        - union()
+        - combine()
+        - join()
+        - merge()
+      answer: union()
+      difficulty: 2
+
+  - question: Qual a maneira correta de arredondar um número em Python?
+      choices:
+        - round()
+        - math.round()
+        - arredonda()
+        - ceil()
+      answer: round()
+      difficulty: 2
+
+  - question: Como se itera sobre os índices e elementos de uma lista em Python?
+      choices:
+        - for i in range(len(list))
+        - for i, item in enumerate(list)
+        - for i, item in list
+        - for item in list
+      answer: for i, item in enumerate(list)
+      difficulty: 2
+
+  - question: Qual é o método utilizado para remover um elemento de um conjunto (set) em Python?
+      choices:
+        - remove()
+        - delete()
+        - discard()
+        - pop()
+      answer: discard()
+      difficulty: 2
+
+  - question: Como se converte uma string em letras maiúsculas em Python?
+      choices:
+        - to_upper()
+        - uppercase()
+        - upper()
+        - str_upper()
+      answer: upper()
+      difficulty: 2
+
+  - question: Qual é o método utilizado para contar o número de ocorrências de um elemento em uma lista em Python?
+      choices:
+        - count()
+        - occurrences()
+        - find()
+        - search()
+      answer: count()
+      difficulty: 2
+
+  - question: Como se verifica se uma string começa com determinado prefixo em Python?
+      choices:
+        - startswith()
+        - beginswith()
+        - prefix()
+        - starts()
+      answer: startswith()
+      difficulty: 2
+
+  - question: Qual a função utilizada para obter o valor absoluto de um número em Python?
+      choices:
+        - abs()
+        - absolute()
+        - value()
+        - get_abs()
+      answer: abs()
+      difficulty: 2
+
+  - question: Como se converte uma lista de strings em uma única string concatenada em Python?
+      choices:
+        - concat_strings()
+        - join()
+        - concatenate()
+        - merge()
+      answer: join()
+      difficulty: 2
+
+  - question: Qual é o método utilizado para verificar se um objeto é uma instância de uma determinada classe em Python?
+      choices:
+        - is_instance()
+        - instance_of()
+        - type_of()
+        - isinstance()
+      answer: isinstance()
+      difficulty: 2
+
+  - question: Como se ordena uma lista em ordem decrescente em Python?
+      choices:
+        - sort(reverse=True)
+        - sort(descending=True)
+        - reverse_sort()
+        - sort_desc()
+      answer: sort(reverse=True)
+      difficulty: 2
+
+  - question: Qual a função utilizada para remover espaços em branco no início e no final de uma string em Python?
+      choices:
+        - strip()
+        - trim()
+        - clean()
+        - remove_whitespace()
+      answer: strip()
+      difficulty: 2
+
+  - question: Como se obtém o último elemento de uma lista em Python?
+      choices:
+        - last()
+        - get_last()
+        - list[-1]
+        - last_element()
+      answer: list[-1]
+      difficulty: 2
+
+  - question: Qual é a diferença entre uma função lambda e uma função definida com 'def' em Python?
+      choices:
+        - Funções lambda são mais eficientes em termos de tempo de execução.
+        - Funções definidas com 'def' podem conter múltiplas expressões.
+        - Funções lambda são funções anônimas e podem ter apenas uma expressão.
+        - Funções lambda não podem ser atribuídas a variáveis.
+      answer: Funções lambda são funções anônimas e podem ter apenas uma expressão.
+      difficulty: 3
+
+  - question: Como se realiza a leitura de um arquivo linha por linha em Python?
+      choices:
+        - readlines()
+        - read_lines()
+        - read_file_lines()
+        - get_lines()
+      answer: readlines()
+      difficulty: 3
+
+  - question: Qual é a forma correta de lidar com exceções em Python?
+      choices:
+        - Usando declarações 'try' e 'finally' apenas.
+        - Capturando todas as exceções possíveis usando 'except Exception'.
+        - Capturando exceções específicas e tratando-as de forma apropriada.
+        - Ignorando exceções para evitar interrupções no programa.
+      answer: Capturando exceções específicas e tratando-as de forma apropriada.
+      difficulty: 3
+
+  - question: Como se define um gerador em Python?
+      choices:
+        - Com a palavra-chave 'generator'.
+        - Usando a função 'generator()'.
+        - Com a palavra-chave 'def' e utilizando 'yield' em vez de 'return'.
+        - Definindo uma classe especial 'Generator'.
+      answer: Com a palavra-chave 'def' e utilizando 'yield' em vez de 'return'.
+      difficulty: 3
+
+  - question: Qual é o método utilizado para ordenar uma lista em Python em ordem reversa?
+      choices:
+        - sort(reverse=True)
+        - sort_desc()
+        - reverse_sort()
+        - sort(reverse)
+      answer: sort(reverse=True)
+      difficulty: 3
+
+  - question: Como se cria uma matriz (array bidimensional) em Python?
+      choices:
+        - Utilizando a biblioteca numpy.
+        - Usando listas aninhadas ou listas de listas.
+        - Com a palavra-chave 'array'.
+        - Não é possível criar matrizes em Python.
+      answer: Usando listas aninhadas ou listas de listas.
+      difficulty: 3
+
+  - question: Qual é a diferença entre uma lista e um conjunto (set) em Python?
+      choices:
+        - Listas são ordenadas e permitem elementos duplicados, enquanto conjuntos não são ordenados e não permitem elementos duplicados.
+        - Listas são mais eficientes em termos de memória do que conjuntos.
+        - Conjuntos são ordenados e permitem elementos duplicados, enquanto listas não são ordenadas e não permitem elementos duplicados.
+        - Não há diferença significativa entre listas e conjuntos em Python.
+      answer: Listas são ordenadas e permitem elementos duplicados, enquanto conjuntos não são ordenados e não permitem elementos duplicados.
+      difficulty: 3
+
+  - question: Como se converte uma lista de strings em uma lista de números inteiros em Python?
+      choices:
+        - convert_to_integers()
+        - int_list()
+        - map(int, list)
+        - to_int()
+      answer: map(int, list)
+      difficulty: 3
+
+  - question: Qual é a função utilizada para encontrar o índice de um elemento em uma lista em Python?
+      choices:
+        - find_index()
+        - index()
+        - get_index()
+        - search_index()
+      answer: index()
+      difficulty: 3
+
+  - question: Como se realiza a iteração sobre as chaves e valores de um dicionário em Python?
+      choices:
+        - for key, value in dict.items()
+        - for key, value in enumerate(dict)
+        - for key in dict.keys() e for value in dict.values()
+        - for key, value in dict.items()
+      answer: for key, value in dict.items()
+      difficulty: 3
+
+  - question: Qual é a função utilizada para escrever em um arquivo em Python?
+      choices:
+        - write_file()
+        - file_write()
+        - write()
+        - save_file()
+      answer: write()
+      difficulty: 3
+
+  - question: Como se obtém a data atual em Python?
+      choices:
+        - current_date()
+        - now()
+        - datetime.now()
+        - today()
+      answer: datetime.now()
+      difficulty: 3
+
+  - question: Qual é o método utilizado para remover todos os elementos de um conjunto (set) em Python?
+      choices:
+        - clear()
+        - delete_all()
+        - remove_all()
+        - discard_all()
+      answer: clear()
+      difficulty: 3
+
+  - question: Como se obtém o diretório atual de trabalho em Python?
+      choices:
+        - getcwd()
+        - current_dir()
+        - dir()
+        - pwd()
+      answer: getcwd()
+      difficulty: 3
+
+  - question: Qual é o método utilizado para encontrar a posição de um caractere ou substring em uma string em Python?
+      choices:
+        - position()
+        - find()
+        - index()
+        - search()
+      answer: find()
+      difficulty: 3
+
+  - question: Como se realiza a ordenação de uma lista de dicionários em Python com base em um valor específico de cada dicionário?
+      choices:
+        - sort_by_value()
+        - sort()
+        - sort(lambda x:* x['key'])
+        - sorted()
+      answer: sorted()
+      difficulty: 3
+
+  - question: Qual é a função utilizada para abrir um arquivo em modo de leitura em Python?
+      choices:
+        - open_file('r')
+        - read_file()
+        - open('r')
+        - file_open('r')
+      answer: open('r')
+      difficulty: 3
+
+  - question: Como se verifica se um arquivo é executável em Python?
+      choices:
+        - is_executable()
+        - check_executable()
+        - os.access(file, os.X_OK)
+        - file_executable()
+      answer: os.access(file, os.X_OK)
+      difficulty: 3
+
+  - question: Qual é o método utilizado para remover um elemento de uma lista sem gerar uma exceção se o elemento não estiver presente?
+      choices:
+        - delete()
+        - remove()
+        - discard()
+        - pop()
+      answer: pop()
+      difficulty: 3
+
+  - question: Como se inverte a ordem dos elementos em uma lista em Python?
+      choices:
+        - invert()
+        - reverse()
+        - sort(reverse=True)
+        - flip()
+      answer: reverse()
+      difficulty: 3
+
+  - question: Qual é a função utilizada para calcular a potência de um número em Python?
+      choices:
+        - power()
+        - pow()
+        - calculate_power()
+        - exp()
+      answer: pow()
+      difficulty: 3
+
+  - question: Como se converte um número inteiro em uma representação binária em Python?
+      choices:
+        - bin()
+        - to_binary()
+        - convert_to_binary()
+        - binary()
+      answer: bin()
+      difficulty: 3
+
+  - question: Qual é a função utilizada para ler o conteúdo completo de um arquivo em Python?
+      choices:
+        - read_all()
+        - read_file()
+        - readlines()
+        - read()
+      answer: read()
+      difficulty: 3
+
+  - question: Como se converte uma string em uma lista de caracteres em Python?
+      choices:
+        - split()
+        - list(str)
+        - to_list()
+        - chars()
+      answer: list(str)
+      difficulty: 3
+
+  - question: Qual é o método utilizado para encontrar a posição de um elemento em uma lista em Python?
+      choices:
+        - find_index()
+        - index()
+        - get_index()
+        - search_index()
+      answer: index()
+      difficulty: 3
+
+  - question: Como se realiza a iteração sobre as chaves e valores (ao mesmo tempo) de um dicionário em Python?
+      choices:
+        - for key, value in dict.items()
+        - for key, value in enumerate(dict)
+        - for key in dict.keys() e for value in dict.values()
+        - for key, value in dict.items()
+      answer: for key, value in dict.items()
+      difficulty: 3

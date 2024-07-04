@@ -1,6 +1,7 @@
 import pygame 
 from sys import exit
 from os import path
+from random import choice
 
 import pygame.ftfont
 from Obstacles import Floor
@@ -272,6 +273,17 @@ class Player(pygame.sprite.Sprite):
         if self.life == 0:
             game.over = True
 
+    def reward_player(self, answer: bool):
+        if answer:
+            prize_list = ['p','p','p','p','p','l','l','l','l','b', 'b','b']
+            prize = choice(prize_list)
+            if prize == 'p':
+                self.points += 200
+            elif prize == 'l':
+                self.life += 1
+            elif prize == 'b':
+                game.inventory_slot.bomb_count += 1
+        else: self.damage()
     #Função UPDATE, atualizada o tempo todo no Game Loop
     def update(self):
         self.invincible_timer()
@@ -713,12 +725,12 @@ while True:
                 if button.is_clicked:
                     question_end = pygame.time.get_ticks()//1000
                     if button.choice == question.answer:
-                        print(True)
+                        player_class.reward_player(True)
                         player_class.has_answered = True
                         game_active = True
                         question_menu = False
                     else:
-                        print(False)
+                        player_class.reward_player(False)
                         player_class.has_answered = True
                         game_active = True
                         question_menu = False
