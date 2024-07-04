@@ -19,6 +19,12 @@ def add(score: dict) -> bool:
     if not scores or len(scores) <= 0:
         scores = { score["maze"]: { score["player"]: score } }
         is_high_score = True
+    elif score["maze"] not in scores:
+        scores[score["maze"]] = { score["player"]: score }
+        is_high_score = True
+    elif score["player"] not in scores[score["maze"]]:
+        scores[score["maze"]][score["player"]] = score
+        is_high_score = True
     else:
         curr_score = scores[score["maze"]][score["player"]]
 
