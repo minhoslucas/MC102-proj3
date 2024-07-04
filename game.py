@@ -22,14 +22,16 @@ class Game:
     professor_group: Group
     classmate_group: Group
 
-    def __init__(self, map = None, win = False, pause = False, over = False, difficulty = 50, time = 0, level = 1):
+    def __init__(self, map = None, win = False, pause = False, over = False, restart = False, difficulty = 50, time = 0, level = 1):
         self._map = map
         self._win = win
         self._pause = pause
         self._over = over
+        self._restart = restart
         self._time = time
         self._level = level
-        self.all_mazes = mazes.copy()
+        self.mazes = mazes
+        self.all_mazes = self.mazes.copy()
         self.extra_time = 0
         self._difficulty = difficulty
         self.floor_coord_list = []
@@ -46,6 +48,12 @@ class Game:
         self.inventory_slot_group = pygame.sprite.Group()
         self.inventory_slot = Inventory()
 
+    @property
+    def restart(self):
+        return self._restart
+    @restart.setter
+    def restart(self, restart):
+        self._restart = restart
 
     @property
     def matrix(self):
@@ -147,10 +155,13 @@ class Game:
         screen.blit(level_surf, level_rect)
 
     def _place_map(self):
-        if self.over:
+        if self.over or (not self.map):
             self.map = random.choice(self.all_mazes)
-        elif (not self.map) or (self.map not in mazes):
-            self.map = random.choice(self.all_mazes)
+            self.mazes = self.all_mazes.copy()
+        elif self.restart:
+            pass
+        else:
+            self.map = random.choice(self.mazes)
 
         matrix = self.map.matrix
 
@@ -272,7 +283,7 @@ class Game:
         self.floor_coord_list = []
         self.place_game()
 
-    def restart(self):
+    def restart_game(self):
         self.classmate_group.empty()
         self.professor_group.empty()
         self.points_item.empty()

@@ -35,5 +35,11 @@ class GameOverMenu:
         self.quit_button = Quit((800, 488))
         self.game_over_buttons.add(self.main_menu_button, self.quit_button, self.restart_button)
 
+class LeaderboardMenu:
+    def __init__(self):
+        self.leaderboard_buttons = pygame.sprite.Group()
+        self.main_menu_button = BackToMenu((200, 488))
+        self.leaderboard_buttons.add(self.main_menu_button)
+
     
     

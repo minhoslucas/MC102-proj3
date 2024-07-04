@@ -5,7 +5,7 @@ from Obstacles import Floor
 from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
-from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu
+from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -13,8 +13,8 @@ def pixels_to_coords(xy: tuple[int, int]):
     return y, x
 
 def coords_to_pixels(xy: tuple[int, int]):
-    x = xy[0] * 25 + 12.5
-    y = xy[1] * 25 + 87.5
+    x = xy[1] * 25 + 12.5
+    y = xy[0] * 25 + 87.5
     return x, y
 
 def print_maze(maze, *movables):
@@ -34,7 +34,7 @@ def print_maze(maze, *movables):
         maze[pos[0]][pos[1]] = old
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, life = 6, points = 0, coords = (1, 11), bomb_cooldown = 0):
+    def __init__(self, life = 6, points = 0, coords = (11, 1), bomb_cooldown = 0):
         super().__init__()
         self.image = pygame.Surface((20, 20))
         self.image.fill('Red')
@@ -185,8 +185,7 @@ class Player(pygame.sprite.Sprite):
         
     #Coloca uma bomba no mapa
     def place_bomb(self):
-        x_coords = (self.coords[0]*25) + 12.5
-        y_coords = (self.coords[1]*25) + 87.5
+        x_coords, y_coords = coords_to_pixels(self.coords)
 
         bomb = ActiveBomb((x_coords, y_coords))
         bombs_item.add(bomb)
@@ -243,7 +242,7 @@ class Player(pygame.sprite.Sprite):
     def restart(self):
         self.points = 0
         self.life = 6
-        self.place_player(coords_to_pixels((1, 11)))
+        self.place_player(coords_to_pixels((11, 1)))
 
     def check_life_count(self):
         if self.life == 0:
@@ -340,9 +339,10 @@ pygame.init()
 #Diferentes modos de jogo e contador de levels
 game_active = False
 game_over = False
-main_menu = True
+main_menu = False
 pause_menu = False
 difficulty_menu = False
+leaderboard_menu = True
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 transparent = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -362,6 +362,7 @@ main_menu_class = MainMenu()
 pause_menu_class = PauseMenu()
 difficulty_menu_class = DifficultyMenu()
 game_over_menu_class = GameOverMenu()
+leaderboard_menu_class = LeaderboardMenu()
 
 game = Game()
 
@@ -370,13 +371,13 @@ while True:
     if game_active:
         # se o jogo estava no modo pause 
         if game.pause:
-            if restart:
+            if game.restart:
                 start_time = pygame.time.get_ticks()//1000
                 game.extra_time = 0
                 time_diff = 0
-                game.restart()
+                game.restart_game()
                 player_class.restart()
-                restart = False
+                game.restart = False
             game.pause = False
             start_time += time_diff
         
@@ -566,7 +567,6 @@ while True:
     elif pause_menu:
         pause_start = pygame.time.get_ticks()//1000
         while True:
-            restart = False
 
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
@@ -595,7 +595,7 @@ while True:
 
             #checa se o botão 'Restart' foi clicado
             elif pause_menu_class.restart_button.is_clicked:
-                restart = True
+                game.restart = True
                 pause_menu = False
                 game_active = True 
                 break
@@ -626,3 +626,21 @@ while True:
 
             pygame.display.update()
             clock.tick(60)                               
+    elif leaderboard_menu:
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            game.set_wallpaper(screen)
+            leaderboard_menu_class.leaderboard_buttons.draw(screen)
+            leaderboard_menu_class.leaderboard_buttons.update()
+
+            if leaderboard_menu_class.main_menu_button.is_clicked:
+                main_menu = True
+                leaderboard_menu = False
+                break
+
+            pygame.display.update()
+            clock.tick(60)      
