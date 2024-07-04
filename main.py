@@ -7,7 +7,7 @@ from itertools import chain
 from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu
 
-DEBUG = True
+DEBUG = False
 FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
 
 def pixels_to_coords(xy: tuple[int, int]):
@@ -37,7 +37,7 @@ def print_maze(maze, *movables):
         maze[pos[0]][pos[1]] = old
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, life = 6, points = 0, coords = (11, 1), bomb_cooldown = 0):
+    def __init__(self, life = 6, points = 0, coords = (0, 1), bomb_cooldown = 0):
         super().__init__()
         self.image = pygame.Surface((20, 20))
         self.image.fill('Red')
@@ -112,8 +112,8 @@ class Player(pygame.sprite.Sprite):
     def screen_limits(self):
         if self.rect.left < 0:
             self.rect.left = 0
-        if self.rect.top < 0:
-            self.rect.top = 0
+        if self.rect.top < 70:
+            self.rect.top = 70
         if self.rect.right > 1000:
             self.rect.right = 1000
         if self.rect.bottom > 1000:
@@ -171,7 +171,8 @@ class Player(pygame.sprite.Sprite):
                     self.damage()
 
         if pygame.sprite.spritecollide(player_class, game.exit_tile, 0):
-            self.place_player(coords_to_pixels((11, 1)))
+            for tile in game.entrance_tile.sprites():
+                self.place_player(coords_to_pixels((0, 1)))
             game.win = True
             game.extra_time = 0
         if pygame.sprite.spritecollide(player_class, game.classmate_group, 0):

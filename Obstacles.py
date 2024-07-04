@@ -29,6 +29,7 @@ class Entrance(pygame.sprite.Sprite):
         self.image = pygame.Surface((25, 25))
         self.image.fill('Green')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
+        self.coords = pos
 
 class Exit(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):

@@ -162,7 +162,7 @@ class Game:
             self.mazes = self.all_mazes.copy()
         elif self.restart:
             pass
-        else:
+        elif self.map not in self.mazes:
             self.map = random.choice(self.mazes)
 
         matrix = self.map.matrix
@@ -268,7 +268,7 @@ class Game:
         self.floor_coord_list = []
     
     def _remove_maze(self):
-        mazes.remove(self.map)
+        self.mazes.remove(self.map)
 
     def new_game(self):
         self._clear_groups()
