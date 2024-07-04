@@ -12,7 +12,7 @@ from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, Leaderboard
 from question import select_question
 
 DEBUG = False
-FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
+FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -294,27 +294,27 @@ class Player(pygame.sprite.Sprite):
 
 #Desenha a pontação na tela
 def display_score():
-    text_font = pygame.font.Font(FONT_PATH, 30)
+    text_font = pygame.font.Font(FONT_PATH, 20)
     score_surf = text_font.render(f'Score: {player_class.points}', False, 'White')
     score_rect = score_surf.get_rect(center = (75, 50))
     screen.blit(score_surf, score_rect)
 
 #Desenha as coordenadas na tela
 def display_coords():
-    text_font = pygame.font.Font(FONT_PATH, 30)
+    text_font = pygame.font.Font(FONT_PATH, 20)
     coords_surf = text_font.render(f'Coords: {player_class.coords}', False, 'White')
     coords_rect = coords_surf.get_rect(center = (475, 50))
     screen.blit(coords_surf, coords_rect)
 
 #Desenha a tela de GAME OVER
 def display_game_over():
-    text_font = pygame.font.Font(FONT_PATH, 75)
+    text_font = pygame.font.Font(FONT_PATH, 60)
     game_over_surf = text_font.render('GAME OVER', False, 'White')
     game_over_rect = game_over_surf.get_rect(center = (500, 288))
     screen.blit(game_over_surf, game_over_rect)
 
 def display_title():
-    text_font = pygame.font.Font(FONT_PATH, 75)
+    text_font = pygame.font.Font(FONT_PATH, 50)
     title_surf = text_font.render('Os Labirintos da Unicamp', False, 'White')
     title_rect = title_surf.get_rect(center = (500, 188))
     screen.blit(title_surf, title_rect)
@@ -331,10 +331,22 @@ def display_difficulty():
     screen.blit(difficulty_surf, difficulty_rect)
 
 def display_question(question: str):
-    text_font = pygame.font.Font(FONT_PATH, 30)
-    question_surf = text_font.render(f'{question}', False, 'White')
-    question_rect = question_surf.get_rect(center = (500, 188))
-    screen.blit(question_surf, question_rect)
+    question_list = list(question.split())
+    text_font = pygame.font.Font(FONT_PATH, 20)
+    if len(question_list) > 6:
+        question_1 =  ' '.join(question_list[:6])
+        question_surf = text_font.render(f'{question_1}', False, 'White')
+        question_rect = question_surf.get_rect(center = (500, 223))
+        screen.blit(question_surf, question_rect)
+
+        question_2 =  ' '.join(question_list[6:])
+        question_surf = text_font.render(f'{question_2}', False, 'White')
+        question_rect = question_surf.get_rect(center = (500, 243))
+        screen.blit(question_surf, question_rect)
+    else:
+        question_surf = text_font.render(f'{question}', False, 'White')
+        question_rect = question_surf.get_rect(center = (500, 188))
+        screen.blit(question_surf, question_rect)
 
 #Define a área afetada pela bomba
 def set_explosion(bomb):
@@ -721,7 +733,6 @@ while True:
             if player_class.is_questioned:
                 player_class.is_questioned = False
                 question = select_question(game.difficulty)
-                print(question)
                 question_menu_class = QuestionMenu(question.choices)
 
             question_menu_class.question_buttons.update()

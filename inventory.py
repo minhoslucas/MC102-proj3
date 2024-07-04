@@ -1,7 +1,7 @@
 import pygame
 from os import path
 
-FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
+FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 class Inventory(pygame.sprite.Sprite):
     def __init__(self, bomb_count = 1):
@@ -19,7 +19,7 @@ class Inventory(pygame.sprite.Sprite):
         self._bomb_count = bomb_count
 
     def display_bomb_count(self, screen):
-        text_font = pygame.font.Font(FONT_PATH, 15)
+        text_font = pygame.font.Font(FONT_PATH, 10)
         if self.bomb_count > 0:
             text_surf = text_font.render(f'{self.bomb_count}', False, 'White')
             self.display_item(screen)

@@ -1,14 +1,15 @@
 from os import path
 import pygame
 
-FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
+FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):
         super().__init__()
-        self.font = pygame.font.Font(FONT_PATH, 50)
+        self.font = pygame.font.Font(FONT_PATH, 30)
         self.image = self.font.render('Button', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
+        self.pos = pos
         self.mouse_pos = (0, 0)
         self.is_clicked = False
         self.is_hovering = False
@@ -153,6 +154,9 @@ class QuestionButton(Button):
         self._choice = choice
 
     def update_image(self):
+        if len(self.choice) > 10:
+            self.font = pygame.font.Font(FONT_PATH, 20)
+            self.rect = self.image.get_rect(center = self.pos)
         if self.is_hovering:
             self.image = self.font.render(f'>  {self.choice}', False, 'White')
         else: self.image = self.font.render(f'{self.choice}', False, 'White')
