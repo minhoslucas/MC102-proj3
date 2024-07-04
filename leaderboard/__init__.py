@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from leaderboard.reader import add, read
+from reader import add, read
 
 @dataclass
 class Score:
@@ -14,8 +14,8 @@ class Score:
     def __lt__(self, other):
         return self._orderer() < other._orderer()
 
-    def save(self):
-        add(self.__dict__)
+    def save(self) -> bool:
+        return add(self.__dict__)
 
 def leaderboard() -> dict[int, list[Score]]:
     raw_leaderboard = read()
@@ -45,4 +45,19 @@ if __name__ == "__main__":
     lb = leaderboard()
 
     assert lb[mock_score.maze][0].score == mock_score.score
+
+    other_score = Score("lucas", 245, 700, 2)
+    other_score.save()
+
+    lb = leaderboard()
+
+    assert lb[other_score.maze][0] == other_score
+    assert lb[other_score.maze][1] == mock_score
+
+    other_score = Score("meida", 300, 500, 3)
+    other_score.save()
+
+    lb = leaderboard()
+
+    assert lb[3][0] == other_score
 
