@@ -170,8 +170,7 @@ class SliderButton(pygame.sprite.Sprite):
         self._pos = pos
         self._val = val
         self.slider_case = SliderCase(pos)
-        self.image = pygame.Surface((25, 25))
-        self.image.fill('Blue')
+        self.image = pygame.image.load(path.join('assets', 'images', 'slider_button.png'))
         self.rect = self.image.get_rect(center = (self.pos[0], self.pos[1]))
         self.is_clicked = False
         self.mouse_pos = (0, 0)
