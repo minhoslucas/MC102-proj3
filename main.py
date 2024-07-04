@@ -9,7 +9,7 @@ from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu
-from question.__init__ import select_question
+from question import select_question
 
 DEBUG = False
 FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
@@ -715,7 +715,7 @@ while True:
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
                     pygame.quit()
-                    exit()   
+                    exit()
 
             game.set_wallpaper(screen)
             if player_class.is_questioned:
