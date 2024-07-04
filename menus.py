@@ -73,6 +73,29 @@ class QuestionMenu:
     def choice_list(self, choice_list):
         self._choice_list = choice_list
 
+class NameMenu:
+    def __init__(self):
+        self.name_buttons = pygame.sprite.Group()
+        self.start_button = Start((500, 588))
+        self.name_buttons.add(self.start_button)
+
+    def name_box(self, screen):
+        name_surf = pygame.Surface((500, 100))
+        name_surf.fill('White')
+        name_rect = name_surf.get_rect(center = (500, 388))
+        screen.blit(name_surf, name_rect)
+
+    def display_name_title(self, screen):
+        text_font = pygame.font.Font(FONT_PATH, 60)
+        display_surf = text_font.render('Name:', False, 'White')
+        display_rect = display_surf.get_rect(center = (500, 288))
+        screen.blit(display_surf, display_rect)
+
+    def display_name(self, screen, user_text):
+        text_font = pygame.font.Font(FONT_PATH, 60)
+        display_surf = text_font.render(f'{user_text}', False, 'Black')
+        display_rect = display_surf.get_rect(center = (500, 388))
+        screen.blit(display_surf, display_rect)
 
     
     

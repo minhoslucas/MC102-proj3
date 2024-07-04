@@ -8,7 +8,7 @@ from Obstacles import Floor
 from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
-from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu
+from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu, NameMenu
 from leaderboard import Score, leaderboard
 from question import select_question
 
@@ -412,6 +412,7 @@ pause_menu = False
 difficulty_menu = False
 leaderboard_menu = False
 question_menu = False
+name_menu = False
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 transparent = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -432,6 +433,7 @@ pause_menu_class = PauseMenu()
 difficulty_menu_class = DifficultyMenu()
 game_over_menu_class = GameOverMenu()
 leaderboard_menu_class = LeaderboardMenu()
+name_menu_class = NameMenu()
 
 game = Game()
 
@@ -638,7 +640,7 @@ while True:
             #checa se o botão 'Start' foi selecionado
             if main_menu_class.start_button.is_clicked:
                 main_menu = False
-                game_active = True
+                name_menu = True
                 break
 
             #checa se o botão 'Quit' foi selecionado
@@ -723,7 +725,7 @@ while True:
             pygame.display.update()
             clock.tick(60)                               
     elif leaderboard_menu:
-        new_score = Score("Pedro", time=game.time, score=player_class.points, maze=game.level)
+        new_score = Score(user_text, time=999, score=player_class.points, maze=game.level)
         is_high_score = new_score.save()
 
         scores = leaderboard()
@@ -787,4 +789,35 @@ while True:
                 break
             
             pygame.display.update()
-            clock.tick(60)              
+            clock.tick(60)    
+    elif name_menu:
+        user_text = ''
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()   
+
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]
+                    elif len(user_text) > 8:
+                        pass
+                    else:
+                        user_text += event.unicode
+            
+            game.set_wallpaper(screen)
+            name_menu_class.name_buttons.update()
+            name_menu_class.name_buttons.draw(screen)
+            name_menu_class.name_box(screen)
+            name_menu_class.display_name_title(screen)
+            name_menu_class.display_name(screen, user_text)
+
+            if name_menu_class.start_button.is_clicked:
+                game_active = True
+                name_menu = False
+                break
+            
+
+            pygame.display.update()
+            clock.tick(60)          
