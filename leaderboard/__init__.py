@@ -8,11 +8,10 @@ class Score:
     score: int
     maze: int
 
-    def _orderer(self):
-        return self.time, self.score, self.player
-
     def __lt__(self, other):
-        return self._orderer() < other._orderer()
+
+        return (other.time, self.score, self.player) < \
+               (self.time, other.score, other.player)
 
     def save(self) -> bool:
         return add(self.__dict__)
