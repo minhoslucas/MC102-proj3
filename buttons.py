@@ -138,6 +138,26 @@ class BackToMenu(Button):
             self.image = self.font.render(f'>  Main Menu', False, 'White')
         else: self.image = self.font.render(f'Main Menu', False, 'White')
 
+class QuestionButton(Button):
+    def __init__(self, pos: tuple[int, int], choice: str):
+        super().__init__(pos)
+        self._choice = choice
+        self.image = self.font.render(f'{self.choice}', False, 'White')
+        self.rect = self.image.get_rect(center = pos)
+
+    @property
+    def choice(self):
+        return self._choice 
+    @choice.setter
+    def choice(self, choice):
+        self._choice = choice
+
+    def update_image(self):
+        if self.is_hovering:
+            self.image = self.font.render(f'>  {self.choice}', False, 'White')
+        else: self.image = self.font.render(f'{self.choice}', False, 'White')
+
+
 class SliderButton(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int], val: float):
         super().__init__()

@@ -1,5 +1,5 @@
 import pygame
-from buttons import Start, Quit, Restart, Resume, Back, Difficulty, BackToMenu, SliderButton
+from buttons import Start, Quit, Restart, Resume, Back, Difficulty, BackToMenu, SliderButton, QuestionButton
 
 class MainMenu:
     def __init__(self):
@@ -40,6 +40,26 @@ class LeaderboardMenu:
         self.leaderboard_buttons = pygame.sprite.Group()
         self.main_menu_button = BackToMenu((200, 488))
         self.leaderboard_buttons.add(self.main_menu_button)
+
+class QuestionMenu:
+    def __init__(self, choice_list = [None, None, None, None]):
+        self._choice_list = choice_list
+        self.question_buttons = pygame.sprite.Group()
+        self.question_button_1 = QuestionButton((500, 388), choice_list[0])
+        self.question_button_2 = QuestionButton((500, 488), choice_list[1])
+        self.question_button_3 = QuestionButton((500, 588), choice_list[2])
+        self.question_button_4 = QuestionButton((500, 688), choice_list[3])
+        self.question_buttons.add(self.question_button_1, self.question_button_2, self.question_button_3, self.question_button_4)
+    def update_choice_list(self, choice_list):
+        self.choice_list = choice_list
+        
+    @property
+    def choice_list(self):
+        return self._choice_list
+    @choice_list.setter
+    def choice_list(self, choice_list):
+        self._choice_list = choice_list
+
 
     
     

@@ -1,11 +1,14 @@
 import pygame 
 from sys import exit
 from os import path
+
+import pygame.ftfont
 from Obstacles import Floor
 from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
-from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu
+from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu
+from question.__init__ import select_question
 
 DEBUG = False
 FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
@@ -37,7 +40,7 @@ def print_maze(maze, *movables):
         maze[pos[0]][pos[1]] = old
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, life = 6, points = 0, coords = (0, 1), bomb_cooldown = 0):
+    def __init__(self, life = 6, points = 0, coords = (0, 1), bomb_cooldown = 0, is_questioned = False, has_answered = False):
         super().__init__()
         self.image = pygame.Surface((20, 20))
         self.image.fill('Red')
@@ -46,8 +49,24 @@ class Player(pygame.sprite.Sprite):
         self._points = points
         self._coords = coords
         self._bomb_cooldown = bomb_cooldown
+        self._is_questioned = is_questioned
+        self._has_aswered = has_answered
         self.invincible = False
         self.start_time = 0
+
+    @property
+    def has_answered(self):
+        return self._has_aswered
+    @has_answered.setter
+    def has_answered(self, has_answered):
+        self._has_aswered = has_answered
+
+    @property
+    def is_questioned(self):
+        return self._is_questioned
+    @is_questioned.setter
+    def is_questioned(self, is_questioned):
+        self._is_questioned = is_questioned
 
     @property
     def points(self):
@@ -175,8 +194,9 @@ class Player(pygame.sprite.Sprite):
                 self.place_player(coords_to_pixels((0, 1)))
             game.win = True
             game.extra_time = 0
-        if pygame.sprite.spritecollide(player_class, game.classmate_group, 0):
-            print(True) #temporário
+        if pygame.sprite.spritecollide(player_class, game.classmate_group, 1):
+           self.is_questioned = True
+
 
         # if self.rect.colliderect(professor.rect):
         #     self.damage()
@@ -289,14 +309,20 @@ def display_title():
 
 def display_difficulty():
     text_font = pygame.font.Font(FONT_PATH, 50)
-    if game.difficulty >= 70:
+    if game.difficulty == 3:
         difficulty_surf = text_font.render(f'Difficulty: Hard', False, 'White')
-    elif game.difficulty < 70 and game.difficulty >= 30:
+    elif game.difficulty == 2:
         difficulty_surf = text_font.render(f'Difficulty: Medium', False, 'White')
     else:
         difficulty_surf = text_font.render(f'Difficulty: Easy', False, 'White')
     difficulty_rect = difficulty_surf.get_rect(center = (500, 288))
     screen.blit(difficulty_surf, difficulty_rect)
+
+def display_question(question: str):
+    text_font = pygame.font.Font(FONT_PATH, 30)
+    question_surf = text_font.render(f'{question}', False, 'White')
+    question_rect = question_surf.get_rect(center = (500, 188))
+    screen.blit(question_surf, question_rect)
 
 #Define a área afetada pela bomba
 def set_explosion(bomb):
@@ -347,6 +373,7 @@ main_menu = True
 pause_menu = False
 difficulty_menu = False
 leaderboard_menu = False
+question_menu = False
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 transparent = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -384,6 +411,10 @@ while True:
                 game.restart = False
             game.pause = False
             start_time += time_diff
+
+        elif player_class.has_answered:
+            start_time += time_diff
+            player_class.has_answered = False
         
         #se player encontrou a saída
         elif game.win:
@@ -488,6 +519,11 @@ while True:
             #checa se player está na saída
             if game.win:
                 game.level += 1
+                break
+
+            if player_class.is_questioned:
+                question_menu = True
+                game_active = False
                 break
                 
 
@@ -627,7 +663,12 @@ while True:
                 main_menu = True
                 break
             
-            game.difficulty = difficulty_menu_class.slider_button.val
+            if difficulty_menu_class.slider_button.val >= 70:
+                game.difficulty = 3
+            elif difficulty_menu_class.slider_button.val >= 30 and difficulty_menu_class.slider_button.val < 70:
+                game.difficulty = 2
+            else:
+                game.difficulty = 1
 
             pygame.display.update()
             clock.tick(60)                               
@@ -648,4 +689,42 @@ while True:
                 break
 
             pygame.display.update()
-            clock.tick(60)      
+            clock.tick(60) 
+    elif question_menu:
+        question_start = pygame.time.get_ticks()//1000
+        while True:
+            for event in pygame.event.get():
+                if event.type ==  pygame.QUIT:
+                    pygame.quit()
+                    exit()   
+
+            game.set_wallpaper(screen)
+            if player_class.is_questioned:
+                player_class.is_questioned = False
+                question = select_question(game.difficulty)
+                question_menu_class = QuestionMenu(question.choices)
+
+            question_menu_class.question_buttons.update()
+            question_menu_class.question_buttons.draw(screen)
+            display_question(question.question)
+            question_end = 0
+
+            for button in question_menu_class.question_buttons.sprites():
+                if button.is_clicked:
+                    question_end = pygame.time.get_ticks()//1000
+                    if button.choice == question.answer:
+                        print(True)
+                        player_class.has_answered = True
+                        game_active = True
+                        question_menu = False
+                    else:
+                        print(False)
+                        player_class.has_answered = True
+                        game_active = True
+                        question_menu = False
+            time_diff = question_end - question_start
+            if not question_menu:
+                break
+            
+            pygame.display.update()
+            clock.tick(60)              

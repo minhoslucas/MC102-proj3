@@ -214,11 +214,11 @@ class Game:
 
 
     def _place_entities(self):
-        if self.difficulty >= 70:
+        if self.difficulty == 3:
             num_prof = 4
             num_class = 4
             prof_speed = 3
-        elif self.difficulty < 70 and self.difficulty >= 30:
+        elif self.difficulty == 2:
             num_prof = 3
             num_class = 4
             prof_speed = 2

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-import reader
+from question import reader
 from random import randrange, shuffle
 
 @dataclass
