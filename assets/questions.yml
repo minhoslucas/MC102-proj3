@@ -11,9 +11,9 @@ questions:
   - question: Qual é o operador utilizado em Python para realizar uma divisão inteira?
     choices:
       - /
-      - %
+      - "%"
       - //
-      - *
+      - "*"
     answer: //
     difficulty: 1
 
@@ -55,11 +55,11 @@ questions:
 
   - question: Qual a diferença entre '=' e '==' em Python?
     choices:
-      - '=' é o operador de comparação, enquanto '==' é o operador de atribuição.
-      - '=' é o operador de adição, enquanto '==' é o operador de igualdade.
-      - '=' é o operador de atribuição, enquanto '==' é o operador de comparação.
-      - '=' e '==' são operadores equivalentes em Python.
-    answer: '=' é o operador de atribuição, enquanto '==' é o operador de comparação.
+      - "'=' é o operador de comparação, enquanto '==' é o operador de atribuição."
+      - "'=' é o operador de adição, enquanto '==' é o operador de igualdade."
+      - "'=' é o operador de atribuição, enquanto '==' é o operador de comparação."
+      - "'=' e '==' são operadores equivalentes em Python."
+    answer: "'=' é o operador de atribuição, enquanto '==' é o operador de comparação."
     difficulty: 1
 
   - question: Que função retorna tanto o item quanto o index de um elemento em uma lista?
@@ -154,11 +154,11 @@ questions:
 
   - question: Como se cria uma lista vazia em Python?
     choices:
-      - '[]' ou list()
+      - "'[]' ou list()"
       - create_list()
       - empty_list()
       - new_list()
-    answer: '[]'
+    answer: "'[]'"
     difficulty: 1
 
   - question: Qual a função utilizada para converter uma string em letras minúsculas em Python?
@@ -190,7 +190,7 @@ questions:
 
   - question: Como se cria um conjunto (set) vazio em Python?
     choices:
-      - '{}'
+      - "'{}'"
       - set()
       - new_set()
       - empty_set()
@@ -235,11 +235,11 @@ questions:
 
   - question: Como se cria uma lista vazia em Python?
     choices:
-      - '[]' ou list()
+      - "'[]' ou list()"
       - create_list()
       - empty_list()
       - new_list()
-    answer: '[]'
+    answer: "'[]' ou list()"
     difficulty: 1
 
   - question: Qual é a função utilizada para calcular o comprimento de uma string em Python?

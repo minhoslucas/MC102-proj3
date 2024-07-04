@@ -22,6 +22,8 @@ questions: dict[int, list[Question]] = \
      for difficulty, qList in reader.questions.items()}
 
 def select_question(difficulty: int) -> Question:
+    print(difficulty)
+
     if difficulty not in questions:
         return None
 

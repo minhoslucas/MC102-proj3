@@ -10,4 +10,4 @@ with open(path.join("assets", "questions.yml")) as stream:
         if (difficulty := question["difficulty"]) not in questions:
             questions[difficulty] = [question]
         else:
-            question[difficulty].append(question)
+            questions[difficulty].append(question)
