@@ -12,7 +12,9 @@ from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, Leaderboard
 from leaderboard import Score, leaderboard
 from question import select_question
 
-DEBUG = False
+from Tile import Tile
+
+DEBUG = True
 FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 def pixels_to_coords(xy: tuple[int, int]):
@@ -41,12 +43,10 @@ def print_maze(maze, *movables):
     for pos, old in old_pos:
         maze[pos[0]][pos[1]] = old
 
-class Player(pygame.sprite.Sprite):
+class Player(Tile):
     def __init__(self, life = 6, points = 0, coords = (0, 1), bomb_cooldown = 0, is_questioned = False, has_answered = False):
-        super().__init__()
-        self.image = pygame.Surface((20, 20))
+        super().__init__(coords, size=20)
         self.image.fill('Red')
-        self.rect = self.image.get_rect(center = coords_to_pixels(coords))
         self._life = life
         self._points = points
         self._coords = coords
@@ -80,9 +80,10 @@ class Player(pygame.sprite.Sprite):
     @property
     def life(self):
         return self._life
+
     @life.setter
     def life(self, life):
-        self._life = life
+        self._life = min(life, 6)
 
     @property
     def coords(self):
@@ -169,22 +170,9 @@ class Player(pygame.sprite.Sprite):
 
     #Checa por colisões de player com itens ou explosões
     def check_colisions(self):
-        for item in game.points_item.sprites():
+        for item in game.items.sprites():
             if self.rect.colliderect(item.rect):
-                self.points += item._value
-                pygame.sprite.Sprite.kill(item)
-
-        for item in game.lifes_item.sprites():
-            if self.rect.colliderect(item.rect):
-                pygame.sprite.Sprite.kill(item)
-
-                if self.life < 6:
-                    self.life += item._value
-
-        for item in game.time_item.sprites():
-            if self.rect.colliderect(item.rect):
-                pygame.sprite.Sprite.kill(item)
-                game.extra_time += item._value
+                item.act(self, game)
 
         if len(explosions.sprites()) > 0:
             for explosion in explosions.sprites():
@@ -497,9 +485,7 @@ while True:
             game.walls.draw(screen)
             game.map_borders.draw(screen)
             player.draw(screen)
-            game.points_item.draw(screen)
-            game.lifes_item.draw(screen)
-            game.time_item.draw(screen)
+            game.items.draw(screen)
             game.inventory_slot_group.draw(screen)
             game.inventory_slot.display_bomb_count(screen)
             bombs_item.draw(screen)

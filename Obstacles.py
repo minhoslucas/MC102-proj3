@@ -1,39 +1,31 @@
 import pygame 
 from os import path
 
+from Tile import Tile
+
 imagePath = path.join("assets", "images")
 
-class Wall(pygame.sprite.Sprite):
+class Wall(Tile):
     def __init__(self, pos: tuple[int, int]):
-        super().__init__()
+        super().__init__(pos, size=25)
         self.image = pygame.image.load(path.join(imagePath, 'wall.png')).convert()
-        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
-        self.wall_coords = pos
 
-class UnbreakableWall(pygame.sprite.Sprite):
+class UnbreakableWall(Tile):
     def __init__(self, pos: tuple[int, int]):
-        super().__init__()
+        super().__init__(pos, size=25)
         self.image = pygame.image.load(path.join(imagePath, 'unbreakable_wall.png')).convert()
-        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
-class Floor(pygame.sprite.Sprite):
+class Floor(Tile):
     def __init__(self, pos: tuple[int, int]):
-        super().__init__()
+        super().__init__(pos, size=25)
         self.image = pygame.image.load(path.join(imagePath, 'floor_tile.png')).convert()
-        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
-        self.floor_coords = pos
 
-class Entrance(pygame.sprite.Sprite):
+class Entrance(Tile):
     def __init__(self, pos: tuple[int, int]):
-        super().__init__()
-        self.image = pygame.Surface((25, 25))
+        super().__init__(pos, size=25)
         self.image.fill('Green')
-        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
-        self.coords = pos
 
-class Exit(pygame.sprite.Sprite):
+class Exit(Tile):
     def __init__(self, pos: tuple[int, int]):
-        super().__init__()
-        self.image = pygame.Surface((25, 25))
+        super().__init__(pos, size=25)
         self.image.fill('Red')
-        self.rect = self.image.get_rect(center = (pos[0], pos[1]))   

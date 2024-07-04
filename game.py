@@ -42,9 +42,7 @@ class Game:
         self.map_borders = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
-        self.points_item = pygame.sprite.Group()
-        self.lifes_item = pygame.sprite.Group()
-        self.time_item = pygame.sprite.Group()
+        self.items = pygame.sprite.Group()
         self.professor_group = pygame.sprite.Group()
         self.classmate_group = pygame.sprite.Group()
         self.inventory_slot_group = pygame.sprite.Group()
@@ -170,7 +168,7 @@ class Game:
         for line_index, line in enumerate(matrix):
             for tile_index, tile in enumerate(line):
                 tile = str(tile)
-                coords = self._coords_to_pixels((tile_index, line_index))
+                coords = (line_index, tile_index)
 
                 if tile == 'S':
                     exit_class = Exit(coords)
@@ -183,35 +181,31 @@ class Game:
                     self.walls.add(Wall(coords))
                 elif tile == ' ':
                     self.floors.add(Floor(coords))
-                    if coords[0] > 200:
-                        self.floor_coord_list.append((coords, (line_index, tile_index)))
+                    self.floor_coord_list.append(coords)
         
         for wall in self.walls.sprites():  #remove na marra os tiles com overlapping
             for tile in self.floor_coord_list:
-                if wall.wall_coords == tile[0]:
+                if wall.pos == tile[0]:
                    self.floor_coord_list.remove(tile)
-                
 
     def _place_items(self):
-
         points_pos = random.sample(self.floor_coord_list, 5)
         for pos in points_pos:
             self.floor_coord_list.remove(pos)
-            self.map.matrix[pos[1][0]][pos[1][1]] = 'P'
-            self.points_item.add(Points(pos[0]))
+            self.matrix[pos[0]][pos[1]] = "P"
+            self.items.add(Points(pos))
 
         lifes_pos = random.sample(self.floor_coord_list, 5)
         for pos in lifes_pos:
             self.floor_coord_list.remove(pos)
-            self.map.matrix[pos[1][0]][pos[1][1]] = 'L'
-            self.lifes_item.add(Life(pos[0]))
+            self.matrix[pos[0]][pos[1]] = "L"
+            self.items.add(Life(pos))
 
         time_pos = random.sample(self.floor_coord_list, 3)
         for pos in time_pos:
             self.floor_coord_list.remove(pos)
-            self.map.matrix[pos[1][0]][pos[1][1]] = 'T'
-            self.time_item.add(Time(pos[0]))
-
+            self.matrix[pos[0]][pos[1]] = "T"
+            self.items.add(Time(pos))
 
     def _place_entities(self):
         if self.difficulty == 3:
@@ -229,14 +223,15 @@ class Game:
 
         professor_pos = random.sample(self.floor_coord_list, num_prof)
         for pos in professor_pos:
-            self.map.matrix[pos[1][0]][pos[1][1]] = 'p'
-            self.professor_group.add(Professor(pos[0], prof_speed))
+            print(pos)
+            self.map.matrix[pos[0]][pos[1]] = 'p'
+            self.professor_group.add(Professor(pos, prof_speed))
 
         classmate_pos = random.sample(self.floor_coord_list, num_class)
         classmate_sprites = random.sample(classmate_sprites_list, num_class)
         for ind, pos in enumerate(classmate_pos):
-            self.map.matrix[pos[1][0]][pos[1][1]] = 'c'
-            self.classmate_group.add(Classmate(pos[0], classmate_sprites[ind]))
+            self.map.matrix[pos[0]][pos[1]] = 'c'
+            self.classmate_group.add(Classmate(pos, classmate_sprites[ind]))
 
     def _load_inventory_slot(self):
         self.inventory_slot_group.add(self.inventory_slot)
@@ -261,9 +256,7 @@ class Game:
         self.floors.empty()
         self.walls.empty()
         self.map_borders.empty()
-        self.points_item.empty()
-        self.lifes_item.empty()
-        self.time_item.empty()
+        self.items.empty()
         self.inventory_slot_group.empty()
         self.floor_coord_list = []
     
@@ -278,19 +271,15 @@ class Game:
     def full_restart(self):
         self.classmate_group.empty()
         self.professor_group.empty()
-        self.points_item.empty()
-        self.lifes_item.empty()
+        self.items.empty()
         self.inventory_slot_group.empty()
-        self.time_item.empty()
         self.floor_coord_list = []
         self.place_game()
 
     def restart_game(self):
         self.classmate_group.empty()
         self.professor_group.empty()
-        self.points_item.empty()
-        self.lifes_item.empty()
-        self.time_item.empty()
+        self.items.empty()
         self.inventory_slot_group.empty()
         self.place_game()
 
