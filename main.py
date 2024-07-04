@@ -9,6 +9,7 @@ from Explosion import  Explosion, ActiveBomb
 from itertools import chain
 from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu
+from leaderboard import Score, leaderboard
 from question import select_question
 
 DEBUG = False
@@ -313,6 +314,13 @@ def display_game_over():
     game_over_rect = game_over_surf.get_rect(center = (500, 288))
     screen.blit(game_over_surf, game_over_rect)
 
+
+def display_you_win():
+    text_font = pygame.font.Font(FONT_PATH, 60)
+    you_win_surf = text_font.render('YOU WIN!', False, 'White')
+    you_win_rect = you_win_surf.get_rect(center = (500, 288))
+    screen.blit(you_win_surf, you_win_rect)
+
 def display_title():
     text_font = pygame.font.Font(FONT_PATH, 50)
     title_surf = text_font.render('Os Labirintos da Unicamp', False, 'White')
@@ -556,6 +564,11 @@ while True:
                 question_menu = True
                 game_active = False
                 break
+
+            if game.level > 1:
+                leaderboard_menu = True
+                game_active = False
+                break
                 
 
             #Configurações da bomba
@@ -704,6 +717,9 @@ while True:
             pygame.display.update()
             clock.tick(60)                               
     elif leaderboard_menu:
+        new_score = Score("Player", time=game.time, score=player_class.points, maze=game.level)
+        new_score.save()
+        scores = leaderboard()
         while True:
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:
@@ -711,13 +727,18 @@ while True:
                     exit()
 
             game.set_wallpaper(screen)
-            leaderboard_menu_class.leaderboard_buttons.draw(screen)
+            display_you_win()
+
             leaderboard_menu_class.leaderboard_buttons.update()
+            leaderboard_menu_class.leaderboard_buttons.draw(screen)
+            leaderboard_menu_class.display_scores(screen, scores[2])
+
+            
+
 
             if leaderboard_menu_class.main_menu_button.is_clicked:
-                main_menu = True
-                leaderboard_menu = False
-                break
+                pygame.quit()
+                exit()
 
             pygame.display.update()
             clock.tick(60) 

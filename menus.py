@@ -1,5 +1,9 @@
 import pygame
+from os import path
+
 from buttons import Start, Quit, Restart, Resume, Back, Difficulty, BackToMenu, SliderButton, QuestionButton
+
+FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 class MainMenu:
     def __init__(self):
@@ -40,6 +44,15 @@ class LeaderboardMenu:
         self.leaderboard_buttons = pygame.sprite.Group()
         self.main_menu_button = BackToMenu((200, 488))
         self.leaderboard_buttons.add(self.main_menu_button)
+
+    def display_scores(self, screen, score_list):
+        text_font = pygame.font.Font(FONT_PATH, 20)
+        for place, score in enumerate(score_list):
+            if place > 5:
+                continue
+            score_surf = text_font.render(f'{score}', False, 'White')
+            score_rect = score_surf.get_rect(center = (500, 188+(35*place)))
+            screen.blit(score_surf, score_rect)
 
 class QuestionMenu:
     def __init__(self, choice_list = [None, None, None, None]):
