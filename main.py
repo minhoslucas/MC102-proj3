@@ -717,9 +717,11 @@ while True:
             pygame.display.update()
             clock.tick(60)                               
     elif leaderboard_menu:
-        scores = leaderboard()
         new_score = Score("Player", time=game.time, score=player_class.points, maze=game.level)
-        new_score.save()
+        is_high_score = new_score.save()
+
+        scores = leaderboard()
+        
         while True:
             for event in pygame.event.get():
                 if event.type ==  pygame.QUIT:

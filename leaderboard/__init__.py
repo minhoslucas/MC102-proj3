@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from reader import add, read
+from leaderboard.reader import add, read
 
 @dataclass
 class Score:
