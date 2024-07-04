@@ -7,6 +7,8 @@ from itertools import chain
 from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu
 
+DEBUG = True
+
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
     y = round((xy[1] - 87.5) // 25)
@@ -458,7 +460,8 @@ while True:
 
             game.professor_group.update()
 
-            print_maze(game.matrix, *prof_coords)
+            if DEBUG:
+                print_maze(game.matrix, *prof_coords)
 
             #Desenham a pontuação, vida, coordenadas, e tempo
             display_score()

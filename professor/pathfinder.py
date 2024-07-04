@@ -56,17 +56,12 @@ def backtracker(maze: list[list[str]], initial_pos: tuple[int, int],
         # print((i_tile, initial_pos), (d_tile, destination))
         return []
     
-    print()
-
-    print(path)
-    print(new_path)
-
     for i, tile in enumerate(path):
         if tile in new_path:
             index = new_path.index(tile)
             path[i:] = new_path[index:]
 
-    print([(maze[tile[0]][tile[1]], tile) for tile in path])    
+    # print([(maze[tile[0]][tile[1]], tile) for tile in path])    
     return path
 
 def _backtracker_inner(maze: list[list[str]], destination: tuple[int, int],
