@@ -720,7 +720,8 @@ while True:
             game.set_wallpaper(screen)
             if player_class.is_questioned:
                 player_class.is_questioned = False
-                question = select_question(game.difficulty // 10)
+                question = select_question(game.difficulty)
+                print(question)
                 question_menu_class = QuestionMenu(question.choices)
 
             question_menu_class.question_buttons.update()
