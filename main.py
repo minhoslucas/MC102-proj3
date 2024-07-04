@@ -279,9 +279,9 @@ class Player(pygame.sprite.Sprite):
             prize = choice(prize_list)
             if prize == 'p':
                 self.points += 200
-            elif prize == 'l':
+            elif prize == 'l' and self.life < 6:
                 self.life += 1
-            elif prize == 'b':
+            else:
                 game.inventory_slot.bomb_count += 1
         else: self.damage()
     #Função UPDATE, atualizada o tempo todo no Game Loop
