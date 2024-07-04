@@ -1,11 +1,13 @@
-from typing import Any
+from os import path
 import pygame
+
+FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):
         super().__init__()
-        self.font = pygame.font.Font(None, 50)
-        self.image = self.font.render('Button', True, 'White')
+        self.font = pygame.font.Font(FONT_PATH, 50)
+        self.image = self.font.render('Button', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
         self.mouse_pos = (0, 0)
         self.is_clicked = False
@@ -37,104 +39,104 @@ class Button(pygame.sprite.Sprite):
 class Start(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Start', True, 'White')
+        self.image = self.font.render('Start', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Start', True, 'White')
-        else: self.image = self.font.render('Start', True, 'White')
+            self.image = self.font.render('>  Start', False, 'White')
+        else: self.image = self.font.render('Start', False, 'White')
 
 class Quit(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Quit', True, 'White')
+        self.image = self.font.render('Quit', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Quit', True, 'White')
-        else: self.image = self.font.render('Quit', True, 'White')
+            self.image = self.font.render('>  Quit', False, 'White')
+        else: self.image = self.font.render('Quit', False, 'White')
 
 class Resume(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Resume', True, 'White')
+        self.image = self.font.render('Resume', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Resume', True, 'White')
-        else: self.image = self.font.render('Resume', True, 'White')
+            self.image = self.font.render('>  Resume', False, 'White')
+        else: self.image = self.font.render('Resume', False, 'White')
     
 class SaveAndQuit(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Save and Quit', True, 'White')
+        self.image = self.font.render('Save and Quit', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Save and Quit', True, 'White')
-        else: self.image = self.font.render('Save and Quit', True, 'White')
+            self.image = self.font.render('>  Save and Quit', False, 'White')
+        else: self.image = self.font.render('Save and Quit', False, 'White')
     
 class Save(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Save', True, 'White')
+        self.image = self.font.render('Save', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Save', True, 'White')
-        else: self.image = self.font.render('Save', True, 'White')
+            self.image = self.font.render('>  Save', False, 'White')
+        else: self.image = self.font.render('Save', False, 'White')
 
 class Restart(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Restart', True, 'White')
+        self.image = self.font.render('Restart', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Restart', True, 'White')
-        else: self.image = self.font.render('Restart', True, 'White')
+            self.image = self.font.render('>  Restart', False, 'White')
+        else: self.image = self.font.render('Restart', False, 'White')
 
 class Difficulty(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('Difficulty', True, 'White')
+        self.image = self.font.render('Difficulty', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render('>  Difficulty', True, 'White')
-        else: self.image = self.font.render('Difficulty', True, 'White')
+            self.image = self.font.render('>  Difficulty', False, 'White')
+        else: self.image = self.font.render('Difficulty', False, 'White')
 
 class Back(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render('<', True, 'White')
+        self.image = self.font.render('<', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.font = pygame.font.Font(None, 80)
-            self.image = self.font.render('<', True, 'White')
+            self.font = pygame.font.Font(FONT_PATH, 80)
+            self.image = self.font.render('<', False, 'White')
         else: 
-            self.font = pygame.font.Font(None, 50)
-            self.image = self.font.render('<', True, 'White')
+            self.font = pygame.font.Font(FONT_PATH, 50)
+            self.image = self.font.render('<', False, 'White')
 
 class BackToMenu(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)
-        self.image = self.font.render(f'Main Menu', True, 'White')
+        self.image = self.font.render(f'Main Menu', False, 'White')
         self.rect = self.image.get_rect(center = (pos[0], pos[1]))
 
     def update_image(self):
         if self.is_hovering:
-            self.image = self.font.render(f'>  Main Menu', True, 'White')
-        else: self.image = self.font.render(f'Main Menu', True, 'White')
+            self.image = self.font.render(f'>  Main Menu', False, 'White')
+        else: self.image = self.font.render(f'Main Menu', False, 'White')
 
 class SliderButton(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int], val: float):

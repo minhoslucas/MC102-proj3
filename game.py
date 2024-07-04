@@ -11,6 +11,8 @@ from classmate.classmate import Classmate
 from classmate.reader import classmate_sprites_list
 import random
 
+FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
+
 def load(*args):
     return pygame.image.load(path.join(*args)).convert_alpha()
 
@@ -122,16 +124,16 @@ class Game:
         return x, y
     
     def display_timer(self, screen,  time_limit = 120, start_time = 0):
-        text_font = pygame.font.Font(None, 30)
+        text_font = pygame.font.Font(FONT_PATH, 30)
         self.time = start_time + time_limit - pygame.time.get_ticks()//1000
         self.time += 10*self.extra_time
 
         if self.time <= 0:
             self.over = True
         if self.time%60 < 10:
-            timer_surf = text_font.render(f'Time: {self.time//60}:0{self.time%60}', True, 'White')
+            timer_surf = text_font.render(f'Time: {self.time//60}:0{self.time%60}', False, 'White')
         else:
-            timer_surf = text_font.render(f'Time: {self.time//60}:{self.time%60}', True, 'White')
+            timer_surf = text_font.render(f'Time: {self.time//60}:{self.time%60}', False, 'White')
         timer_rect = timer_surf.get_rect(center = (675, 50))
         screen.blit(timer_surf, timer_rect)
 
@@ -149,8 +151,8 @@ class Game:
                 screen.blit(wallpaper_surf, wallpaper_rect)
 
     def display_level(self, screen):
-        text_font = pygame.font.Font(None, 30)
-        level_surf = text_font.render(f'Level: {self.level}', True, 'White')
+        text_font = pygame.font.Font(FONT_PATH, 30)
+        level_surf = text_font.render(f'Level: {self.level}', False, 'White')
         level_rect = level_surf.get_rect(center = (75, 735))
         screen.blit(level_surf, level_rect)
 

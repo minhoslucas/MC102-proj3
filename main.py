@@ -8,6 +8,7 @@ from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu
 
 DEBUG = True
+FONT_PATH = path.join('assets', 'fonts', 'Minecraft.ttf')
 
 def pixels_to_coords(xy: tuple[int, int]):
     x = round((xy[0] - 12.5) // 25)
@@ -170,7 +171,7 @@ class Player(pygame.sprite.Sprite):
                     self.damage()
 
         if pygame.sprite.spritecollide(player_class, game.exit_tile, 0):
-            self.place_player(coords_to_pixels((1, 11)))
+            self.place_player(coords_to_pixels((11, 1)))
             game.win = True
             game.extra_time = 0
         if pygame.sprite.spritecollide(player_class, game.classmate_group, 0):
@@ -260,39 +261,39 @@ class Player(pygame.sprite.Sprite):
 
 #Desenha a pontação na tela
 def display_score():
-    text_font = pygame.font.Font(None, 30)
-    score_surf = text_font.render(f'Score: {player_class.points}', True, 'White')
+    text_font = pygame.font.Font(FONT_PATH, 30)
+    score_surf = text_font.render(f'Score: {player_class.points}', False, 'White')
     score_rect = score_surf.get_rect(center = (75, 50))
     screen.blit(score_surf, score_rect)
 
 #Desenha as coordenadas na tela
 def display_coords():
-    text_font = pygame.font.Font(None, 30)
-    coords_surf = text_font.render(f'Coords: {player_class.coords}', True, 'White')
+    text_font = pygame.font.Font(FONT_PATH, 30)
+    coords_surf = text_font.render(f'Coords: {player_class.coords}', False, 'White')
     coords_rect = coords_surf.get_rect(center = (475, 50))
     screen.blit(coords_surf, coords_rect)
 
 #Desenha a tela de GAME OVER
 def display_game_over():
-    text_font = pygame.font.Font(None, 100)
-    game_over_surf = text_font.render('GAME OVER', True, 'White')
+    text_font = pygame.font.Font(FONT_PATH, 75)
+    game_over_surf = text_font.render('GAME OVER', False, 'White')
     game_over_rect = game_over_surf.get_rect(center = (500, 288))
     screen.blit(game_over_surf, game_over_rect)
 
 def display_title():
-    text_font = pygame.font.Font(None, 100)
-    title_surf = text_font.render('Os Labirintos da Unicamp', True, 'White')
+    text_font = pygame.font.Font(FONT_PATH, 75)
+    title_surf = text_font.render('Os Labirintos da Unicamp', False, 'White')
     title_rect = title_surf.get_rect(center = (500, 188))
     screen.blit(title_surf, title_rect)
 
 def display_difficulty():
-    text_font = pygame.font.Font(None, 50)
+    text_font = pygame.font.Font(FONT_PATH, 50)
     if game.difficulty >= 70:
-        difficulty_surf = text_font.render(f'Difficulty: Hard', True, 'White')
+        difficulty_surf = text_font.render(f'Difficulty: Hard', False, 'White')
     elif game.difficulty < 70 and game.difficulty >= 30:
-        difficulty_surf = text_font.render(f'Difficulty: Medium', True, 'White')
+        difficulty_surf = text_font.render(f'Difficulty: Medium', False, 'White')
     else:
-        difficulty_surf = text_font.render(f'Difficulty: Easy', True, 'White')
+        difficulty_surf = text_font.render(f'Difficulty: Easy', False, 'White')
     difficulty_rect = difficulty_surf.get_rect(center = (500, 288))
     screen.blit(difficulty_surf, difficulty_rect)
 
@@ -341,10 +342,10 @@ pygame.init()
 #Diferentes modos de jogo e contador de levels
 game_active = False
 game_over = False
-main_menu = False
+main_menu = True
 pause_menu = False
 difficulty_menu = False
-leaderboard_menu = True
+leaderboard_menu = False
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 transparent = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
