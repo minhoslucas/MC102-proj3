@@ -501,8 +501,8 @@ while True:
                 prof_coords.append(professor.coords)
 
                 if not professor.seen:
-                    circle = pygame.draw.circle(transparent, "#ffffffdd", 
-                                                professor.rect.center, 200, 0)
+                    circle = pygame.draw.circle(screen, "#ffffffdd", 
+                                                professor.rect.center, 100, 0)
 
                     if circle.colliderect(player_class.rect):
                         professor.seen = True
