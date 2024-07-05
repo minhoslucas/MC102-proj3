@@ -410,15 +410,19 @@ def save():
 
     save = SaveData(user_text, game.map, player_class.coords, prof_coords, 
                     cmates_coords, items, player_class.points, game.time,
-                    bombs, player_class.life, game.difficulty)
+                    bombs, player_class.life, game.difficulty, game.level)
 
     save.save()
 
 def save_load():
+    global game, player_class
+
     save = load_save()
 
-    game = Game(save.maze, False, False, False, False, save.difficulty, save.time, 1)
+    game = Game(save.maze, False, False, False, False, save.difficulty, save.time, save.level)
     player_class = Player(save.life, save.score, save.player)
+
+    game.load_from_save(save)
 
 SCREEN_WIDTH = 1000
 SCREEN_HIGHT = 775
@@ -426,7 +430,7 @@ PLAYER_SPRITES_FOLDER = path.join('assets', 'images', 'player_sprites')
 
 pygame.init()
 
-#Diferentes modos de jogo e contador de levels
+#Diferentes modos de jogo e contador de levels  
 game_active = False
 game_over = False
 main_menu = True
