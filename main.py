@@ -187,9 +187,8 @@ class Player(Tile):
         if pygame.sprite.spritecollide(player_class, game.classmate_group, 1):
            self.is_questioned = True
 
-
-        # if self.rect.colliderect(professor.rect):
-        #     self.is_questioned = True
+        if pygame.sprite.spritecollide(player_class, game.professor_group, 1):
+            self.is_questioned = True
 
     #Dá dano em player
     def damage(self):
@@ -336,6 +335,8 @@ def display_question(question: str):
     question_list = list(question.split())
     text_font = pygame.font.Font(FONT_PATH, 20)
     if len(question_list) > 6:
+        if len(question_list) > 20:
+            text_font = pygame.font.Font(FONT_PATH, 15)
         question_1 =  ' '.join(question_list[:6])
         question_surf = text_font.render(f'{question_1}', False, 'White')
         question_rect = question_surf.get_rect(center = (500, 223))
@@ -559,7 +560,7 @@ while True:
                 game_active = False
                 break
 
-            if game.level > 1:
+            if game.level > 5:
                 leaderboard_menu = True
                 game_active = False
                 break

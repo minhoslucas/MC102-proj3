@@ -42,15 +42,15 @@ class GameOverMenu:
 class LeaderboardMenu:
     def __init__(self):
         self.leaderboard_buttons = pygame.sprite.Group()
-        self.main_menu_button = BackToMenu((200, 488))
+        self.main_menu_button = Quit((200, 488))
         self.leaderboard_buttons.add(self.main_menu_button)
 
-    def display_scores(self, screen, score_list):
+    def display_scores(self, screen: pygame.Surface, score_list: list):
         text_font = pygame.font.Font(FONT_PATH, 20)
         for place, score in enumerate(score_list):
             if place > 5:
                 continue
-            score_surf = text_font.render(f'{score}', False, 'White')
+            score_surf = text_font.render(f'{score.player} - SCORE: {score.score}', False, 'Yellow')
             score_rect = score_surf.get_rect(center = (500, 188+(35*place)))
             screen.blit(score_surf, score_rect)
 

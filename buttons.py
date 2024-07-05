@@ -157,6 +157,9 @@ class QuestionButton(Button):
         if len(self.choice) > 10:
             self.font = pygame.font.Font(FONT_PATH, 20)
             self.rect = self.image.get_rect(center = self.pos)
+        elif len(self.choice) > 20:
+            self.font = pygame.font.Font(FONT_PATH, 10)
+            self.rect = self.image.get_rect(center = self.pos)
         if self.is_hovering:
             self.image = self.font.render(f'>  {self.choice}', False, 'White')
         else: self.image = self.font.render(f'{self.choice}', False, 'White')
