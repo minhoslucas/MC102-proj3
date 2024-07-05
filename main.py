@@ -791,6 +791,8 @@ while True:
                         pass
                     else:
                         user_text += event.unicode
+
+            user_text = user_text.strip()
             
             game.set_wallpaper(screen)
             name_menu_class.name_buttons.update()
