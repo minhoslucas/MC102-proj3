@@ -1,5 +1,6 @@
 from yaml import safe_dump, safe_load
 from os.path import join
+from os import remove
 
 from maze.reader import MazeTemplate
 
@@ -29,3 +30,7 @@ def write(save: dict):
 
     with open(SAVE_PATH, "w") as save_file:
         safe_dump(save, save_file)
+
+def clear():
+    remove(MAZE_PATH)
+    remove(SAVE_PATH)
