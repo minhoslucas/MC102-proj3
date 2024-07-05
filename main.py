@@ -727,7 +727,7 @@ while True:
 
             leaderboard_menu_class.leaderboard_buttons.update()
             leaderboard_menu_class.leaderboard_buttons.draw(screen)
-            leaderboard_menu_class.display_scores(screen, scores[2])
+            leaderboard_menu_class.display_scores(screen, scores)
 
             if is_high_score:
                 display_new_highscore()
