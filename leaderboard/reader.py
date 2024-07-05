@@ -9,7 +9,8 @@ def read() -> dict[str, dict]:
         return {}
 
     with open(LEADERBOARD_PATH) as file:
-        return safe_load(file)
+        lb = safe_load(file)
+        return lb if lb else {}
 
 def add(score: dict) -> bool:
     is_high_score = False
