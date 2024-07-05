@@ -4,12 +4,14 @@ from os import path
 from itertools import chain
 from maze import mazes, MazeTemplate
 from Obstacles import Wall, UnbreakableWall, Entrance, Exit, Floor
-from Items import Points, Life, Time
+from Items import Points, Life, Time, tag_to_init
 from professor import Professor
 from inventory import Inventory
 from classmate.classmate import Classmate
 from classmate.reader import classmate_sprites_list
 import random
+
+from save import SaveData
 
 FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
@@ -188,7 +190,15 @@ class Game:
                 if wall.pos == tile[0]:
                    self.floor_coord_list.remove(tile)
 
-    def _place_items(self):
+    def _place_items(self, item_pos: dict[str, list[list[int, int]]] = None):
+        if item_pos:
+            for tag, positions in item_pos.items():
+                Init = tag_to_init(tag)
+
+                for pos in positions:
+                    self.items.add(Init(pos))
+            return
+
         points_pos = random.sample(self.floor_coord_list, 5)
         for pos in points_pos:
             self.floor_coord_list.remove(pos)
@@ -197,14 +207,14 @@ class Game:
         lifes_pos = random.sample(self.floor_coord_list, 5)
         for pos in lifes_pos:
             self.floor_coord_list.remove(pos)
-            self.items.add(Life(pos))
+            self.items.add(Life(list(pos)))
 
         time_pos = random.sample(self.floor_coord_list, 3)
         for pos in time_pos:
             self.floor_coord_list.remove(pos)
             self.items.add(Time(pos))
 
-    def _place_entities(self):
+    def _place_entities(self, professor_pos=None, classmate_pos=None):
         if self.difficulty == 3:
             num_prof = 4
             num_class = 4
@@ -218,12 +228,16 @@ class Game:
             num_class = 3
             prof_speed = 1
 
-        professor_pos = random.sample(self.floor_coord_list, num_prof)
+        if not professor_pos:
+            professor_pos = random.sample(self.floor_coord_list, num_prof)
+
         for pos in professor_pos:
             print(pos)
             self.professor_group.add(Professor(pos, prof_speed))
 
-        classmate_pos = random.sample(self.floor_coord_list, num_class)
+        if not classmate_pos:
+            classmate_pos = random.sample(self.floor_coord_list, num_class)
+
         classmate_sprites = random.sample(classmate_sprites_list, num_class)
         for ind, pos in enumerate(classmate_pos):
             self.classmate_group.add(Classmate(pos, classmate_sprites[ind]))
@@ -231,10 +245,10 @@ class Game:
     def _load_inventory_slot(self):
         self.inventory_slot_group.add(self.inventory_slot)
     
-    def place_game(self):
+    def place_game(self, professor_pos=None, classmate_pos=None, item_pos=None):
         self._place_map()
-        self._place_entities()
-        self._place_items()
+        self._place_entities(professor_pos, classmate_pos)
+        self._place_items(item_pos)
         self._load_inventory_slot()
 
     def _clear_groups(self):
@@ -247,6 +261,10 @@ class Game:
         self.inventory_slot_group.empty()
         self.floor_coord_list = []
     
+    def load_from_save(self, save: SaveData):
+        self.place_game(save.professors, save.classmates, save.items)
+        self.inventory_slot.bomb_count = save.bombs
+
     def _remove_maze(self):
         self.mazes.remove(self.map)
 

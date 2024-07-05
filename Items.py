@@ -47,3 +47,11 @@ class Time(Item):
     def act(self, player, game):
         game.extra_time += self.value
         super().act()
+
+def tag_to_init(tag: str) -> Item:
+    if tag == "points":
+        return Points
+    elif tag == "life":
+        return Life
+    elif tag == "time":
+        return Time

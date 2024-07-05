@@ -16,6 +16,7 @@ class SaveData:
     bombs: int
     life: int
     difficulty: int
+    level: int
 
     def save(self):
         write(self.__dict__)
@@ -26,7 +27,7 @@ def load() -> SaveData:
     return save
 
 def main():
-    save = SaveData("meida", mazes[0], (1, 1), [(3, 4), (5, 8)], [(9, 9)], [("life", (8, 8))], 200, 100, 2, 5, 2)
+    save = SaveData("meida", mazes[0], (1, 1), [(3, 4), (5, 8)], [(9, 9)], [("life", (8, 8))], 200, 100, 2, 5, 2, 1)
     save.save()
 
     del save
