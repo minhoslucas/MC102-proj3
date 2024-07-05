@@ -189,7 +189,7 @@ class Player(Tile):
 
 
         # if self.rect.colliderect(professor.rect):
-        #     self.damage()
+        #     self.is_questioned = True
 
     #Dá dano em player
     def damage(self):
