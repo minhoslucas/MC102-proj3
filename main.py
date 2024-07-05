@@ -11,11 +11,11 @@ from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu, NameMenu
 from leaderboard import Score, leaderboard
 from question import select_question
-from save import SaveData, load as load_save, clear as clear_save
+from save import SaveData, load as load_save, clear as clear_save, exists as save_exists
 
 from Tile import Tile
 
-DEBUG = True
+DEBUG = False
 FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 def pixels_to_coords(xy: tuple[int, int]):
@@ -415,9 +415,14 @@ def save():
     save.save()
 
 def save_load():
-    global game, player_class
+    global game, player_class, user_text
 
     save = load_save()
+
+    if not save:
+        return
+    
+    user_text = save.name
 
     game = Game(save.maze, False, False, False, False, save.difficulty, save.time, save.level)
     player_class = Player(save.life, save.score, save.player)
@@ -463,6 +468,8 @@ name_menu_class = NameMenu()
 
 game = Game()
 
+has_save = False
+
 #Game Loop
 while True:
     if game_active:
@@ -500,7 +507,11 @@ while True:
         else:
             start_time = pygame.time.get_ticks()//1000
             time_diff = 0
-            game.place_game()
+
+            if has_save:
+                save_load()
+            else:
+                game.place_game()
 
         while True:
             for event in pygame.event.get():
@@ -676,6 +687,15 @@ while True:
                 main_menu = False
                 difficulty_menu = True
                 break
+
+            elif main_menu_class.continue_button.is_clicked:
+                if save_exists():
+                    # save_load()
+                    game_active = True
+                    main_menu = False
+                    name_menu = False
+                    has_save = True
+                    break
 
             pygame.display.update()
             clock.tick(60)

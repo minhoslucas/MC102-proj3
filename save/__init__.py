@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from maze import MazeTemplate, mazes
 
-from save.reader import read, write, clear
+from save.reader import read, write, clear, exists
 
 @dataclass
 class SaveData:
@@ -22,6 +22,9 @@ class SaveData:
         write(self.__dict__)
 
 def load() -> SaveData:
+    if not exists():
+        return None
+
     save = SaveData(**read())
     clear()
     return save

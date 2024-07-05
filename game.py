@@ -163,8 +163,6 @@ class Game:
             self.mazes = self.all_mazes.copy()
         elif self.restart:
             pass
-        elif self.map not in self.mazes:
-            self.map = random.choice(self.mazes)
 
         matrix = self.map.matrix
 
@@ -173,7 +171,7 @@ class Game:
                 tile = str(tile)
                 coords = (line_index, tile_index)
 
-                if tile == 'S':
+                if tile == 'S': 
                     exit_class = Exit(coords)
                     self.exit_tile.add(exit_class)
                 elif tile == 'E':
