@@ -24,7 +24,7 @@ class Game:
     professor_group: Group
     classmate_group: Group
 
-    def __init__(self, map = None, win = False, pause = False, over = False, restart = False, difficulty = 50, time = 0, level = 1):
+    def __init__(self, map = None, win = False, pause = False, over = False, restart = False, difficulty = 2, time = 0, level = 1):
         self._map = map
         self._win = win
         self._pause = pause
