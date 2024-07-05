@@ -365,7 +365,7 @@ def explosion_damage():
     for explosion in explosions.sprites():
         for wall in game.walls.sprites():
             if explosion.rect.colliderect(wall.rect):
-                coords = wall.wall_coords
+                coords = wall.pos
                 pygame.sprite.Sprite.kill(wall)
                 game.floors.add(Floor(coords))
                 game.update_matrix(coords)
@@ -501,7 +501,7 @@ while True:
                 prof_coords.append(professor.coords)
 
                 if not professor.seen:
-                    circle = pygame.draw.circle(screen, "#ffffffdd", 
+                    circle = pygame.draw.circle(transparent, "#ffffffdd", 
                                                 professor.rect.center, 100, 0)
 
                     if circle.colliderect(player_class.rect):
@@ -787,13 +787,18 @@ while True:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         user_text = user_text[:-1]
+                        user_text = user_text.strip()
+                    elif event.key == pygame.K_KP_ENTER or event.key == pygame.KSCAN_KP_ENTER:
+                        game_active = True
+                        name_menu = False
                     elif len(user_text) > 8:
                         pass
                     else:
                         user_text += event.unicode
-
-            user_text = user_text.strip()
+                        user_text = user_text.strip()
             
+            if not name_menu: break
+
             game.set_wallpaper(screen)
             name_menu_class.name_buttons.update()
             name_menu_class.name_buttons.draw(screen)
