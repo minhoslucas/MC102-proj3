@@ -2,6 +2,7 @@ import pygame
 from os import path
 
 imagePath = path.join("assets", "images")
+#classes que ajustam a explosão e seu tempo de animação
 
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):

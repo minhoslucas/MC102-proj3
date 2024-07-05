@@ -4,6 +4,8 @@ from Tile import Tile
 
 ITEM_PATH = path.join('assets', 'images', 'item_sprites')
 
+#classes para os itens do jogo
+
 class Item(Tile):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)

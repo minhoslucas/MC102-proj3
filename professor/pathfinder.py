@@ -1,5 +1,6 @@
 DIRECTIONS = { "R", "U", "L", "D" }
 
+#pathfinder do professor
 def join_paths(path: list, new_path: list):
     for i, tile in enumerate(path):
         if tile in new_path:

@@ -18,6 +18,7 @@ FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 def load(*args):
     return pygame.image.load(path.join(*args)).convert_alpha()
 
+#Classe que plota todo o jogo na tela
 class Game:
     _map: MazeTemplate
     walls: Group

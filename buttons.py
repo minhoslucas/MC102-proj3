@@ -3,6 +3,7 @@ import pygame
 
 FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
+#botões do jogo
 class Button(pygame.sprite.Sprite):
     def __init__(self, pos: tuple[int, int]):
         super().__init__()

@@ -7,7 +7,6 @@ FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
 
 #Classes para os menus de jogo
 
-
 class MainMenu:
     def __init__(self):
         self.menu_buttons = pygame.sprite.Group()

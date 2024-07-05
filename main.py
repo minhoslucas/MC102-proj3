@@ -720,6 +720,7 @@ while True:
 
             pygame.display.update()
             clock.tick(60)
+
     elif difficulty_menu:
         while True:
             for event in pygame.event.get():
@@ -730,6 +731,7 @@ while True:
             game.set_wallpaper(screen)
             display_difficulty()
 
+            #checa e atualiza os sliders de dificuldade e o botão de voltar
             difficulty_menu_class.difficulty_buttons.update()
             difficulty_menu_class.sliders.update()
             difficulty_menu_class.difficulty_buttons.draw(screen)
@@ -748,9 +750,10 @@ while True:
                 game.difficulty = 1
 
             pygame.display.update()
-            clock.tick(60)                               
+            clock.tick(60)    
+
     elif leaderboard_menu:
-        new_score = Score(user_text, time=999, score=player_class.points, maze=game.level)
+        new_score = Score(user_text, time=game.time, score=player_class.points, maze=game.level)
         is_high_score = new_score.save()
 
         scores = leaderboard()
@@ -777,6 +780,7 @@ while True:
 
             pygame.display.update()
             clock.tick(60) 
+    #menu de escolha de perguntas
     elif question_menu:
         question_start = pygame.time.get_ticks()//1000
         while True:
@@ -814,7 +818,8 @@ while True:
                 break
             
             pygame.display.update()
-            clock.tick(60)    
+            clock.tick(60)  
+    #menu para digitar seu nome  
     elif name_menu:
         user_text = ''
         while True:

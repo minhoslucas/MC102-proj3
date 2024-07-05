@@ -11,6 +11,8 @@ def coords_to_pixels(xy: tuple[int, int]):
     y = xy[0] * 25 + 87.5
     return x, y
 
+#classe mãe dos sprites do jogo
+
 class Tile(Sprite):
     pos: tuple[int, int]
 

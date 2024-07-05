@@ -2,6 +2,8 @@ import pygame
 
 from Tile import Tile, coords_to_pixels
 
+#colegas perdidos no labirinto
+
 class Classmate(Tile):
     def __init__(self, pos: tuple[int, int], sprite: str):
         super().__init__(pos, size=20)

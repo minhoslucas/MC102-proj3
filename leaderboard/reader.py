@@ -3,7 +3,7 @@ import os
 from io import TextIOWrapper
 
 LEADERBOARD_PATH = os.path.join("data", "leaderboard.yml")
-
+#lê o arquivo da leaderboard
 def read() -> dict[str, dict]:
     if not os.path.isfile(LEADERBOARD_PATH):
         return {}

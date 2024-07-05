@@ -2,7 +2,7 @@ import pygame
 from os import path
 
 FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
-
+#classe que armazena quantas bombas o player tem
 class Inventory(pygame.sprite.Sprite):
     def __init__(self, bomb_count = 1):
         super().__init__()

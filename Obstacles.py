@@ -5,6 +5,8 @@ from Tile import Tile
 
 imagePath = path.join("assets", "images")
 
+#todos os obstáculos do jogo
+
 class Wall(Tile):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos, size=25)
