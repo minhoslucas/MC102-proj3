@@ -18,7 +18,7 @@ index = 0
 while True:
     index += 1
 
-    path = os.path.join(MAZE_FOLDER, f"maze{str(index)}.txt")
+    path = os.path.join(MAZE_FOLDER, f"maze{index}.txt")
 
     if not os.path.isfile(path):
         break

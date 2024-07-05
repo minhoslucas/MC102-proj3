@@ -365,10 +365,10 @@ def explosion_damage():
     for explosion in explosions.sprites():
         for wall in game.walls.sprites():
             if explosion.rect.colliderect(wall.rect):
-                coords = wall.pos
+                pos = wall.pos
+                game.floors.add(Floor(pos))
+                game.matrix[pos[0]][pos[1]] = " "
                 pygame.sprite.Sprite.kill(wall)
-                game.floors.add(Floor(coords))
-                game.update_matrix(coords)
 
 #Mata a explosão depos que acabar o timer dela
 def kill_explosion():

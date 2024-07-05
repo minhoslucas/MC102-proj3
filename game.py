@@ -192,19 +192,16 @@ class Game:
         points_pos = random.sample(self.floor_coord_list, 5)
         for pos in points_pos:
             self.floor_coord_list.remove(pos)
-            self.matrix[pos[0]][pos[1]] = "P"
             self.items.add(Points(pos))
 
         lifes_pos = random.sample(self.floor_coord_list, 5)
         for pos in lifes_pos:
             self.floor_coord_list.remove(pos)
-            self.matrix[pos[0]][pos[1]] = "L"
             self.items.add(Life(pos))
 
         time_pos = random.sample(self.floor_coord_list, 3)
         for pos in time_pos:
             self.floor_coord_list.remove(pos)
-            self.matrix[pos[0]][pos[1]] = "T"
             self.items.add(Time(pos))
 
     def _place_entities(self):
@@ -224,25 +221,15 @@ class Game:
         professor_pos = random.sample(self.floor_coord_list, num_prof)
         for pos in professor_pos:
             print(pos)
-            self.map.matrix[pos[0]][pos[1]] = 'p'
             self.professor_group.add(Professor(pos, prof_speed))
 
         classmate_pos = random.sample(self.floor_coord_list, num_class)
         classmate_sprites = random.sample(classmate_sprites_list, num_class)
         for ind, pos in enumerate(classmate_pos):
-            self.map.matrix[pos[0]][pos[1]] = 'c'
             self.classmate_group.add(Classmate(pos, classmate_sprites[ind]))
 
     def _load_inventory_slot(self):
         self.inventory_slot_group.add(self.inventory_slot)
-
-    def update_matrix(self, coords):
-        matrix = self.map.matrix
-        for line_index, line in enumerate(matrix):
-            for tile_index, tile in enumerate(line):
-                if tile == '#' and self._pixels_to_coords(coords) == (tile_index, line_index):
-                    tile = ' '
-                    self.map.matrix = matrix
     
     def place_game(self):
         self._place_map()

@@ -19,6 +19,7 @@ def add(score: dict) -> bool:
 
     if not scores or len(scores) <= 0:
         scores = { score["player"]: score }
+        is_high_score = True
     elif score["player"] not in scores:
         scores[score["player"]] = score
         is_high_score = True

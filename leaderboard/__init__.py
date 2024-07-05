@@ -30,7 +30,6 @@ if __name__ == "__main__":
 
     lb = leaderboard()
 
-
     assert lb[0] == mock_score
 
     mock_score = Score("meida", 250, 600, 2)
