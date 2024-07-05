@@ -92,6 +92,17 @@ class Save(Button):
             self.image = self.font.render('>  Save', False, 'White')
         else: self.image = self.font.render('Save', False, 'White')
 
+class Continue(Button):
+    def __init__(self, pos: tuple[int, int]):
+        super().__init__(pos)
+        self.image = self.font.render('Continue', False, 'White')
+        self.rect = self.image.get_rect(center = (pos[0], pos[1]))
+
+    def update_image(self):
+        if self.is_hovering:
+            self.image = self.font.render('>  Continue', False, 'White')
+        else: self.image = self.font.render('Continue', False, 'White')
+
 class Restart(Button):
     def __init__(self, pos: tuple[int, int]):
         super().__init__(pos)

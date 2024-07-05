@@ -1,9 +1,12 @@
 import pygame
 from os import path
 
-from buttons import Start, Quit, Restart, Resume, Back, Difficulty, BackToMenu, SliderButton, QuestionButton
+from buttons import Start, Quit, Restart, Resume, Back, Difficulty, BackToMenu, SliderButton, QuestionButton, Continue
 
 FONT_PATH = path.join('assets', 'fonts', 'Clarity.otf')
+
+#Classes para os menus de jogo
+
 
 class MainMenu:
     def __init__(self):
@@ -11,7 +14,8 @@ class MainMenu:
         self.start_button = Start((250, 388))
         self.quit_button = Quit((750, 388))
         self.difficulty_button = Difficulty((500, 288))
-        self.menu_buttons.add(self.start_button, self.quit_button, self.difficulty_button)
+        self.continue_button = Continue((500, 488))
+        self.menu_buttons.add(self.start_button, self.quit_button, self.difficulty_button, self.continue_button)
         
 class PauseMenu:
     def __init__(self):

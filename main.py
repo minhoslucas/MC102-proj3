@@ -222,6 +222,7 @@ class Player(Tile):
                 self.start_time = 0
                 self.invincible = False
 
+    #animação de player
     def _animate(self, path_list: tuple[str, str, str], time: int, flip: bool = False):
         if (time%400 >= 0 and time%400 < 100) or (time%400 >= 200 and time%400 < 300): 
             self.image = pygame.image.load(path.join(PLAYER_SPRITES_FOLDER, path_list[0]))
@@ -273,6 +274,7 @@ class Player(Tile):
             else:
                 game.inventory_slot.bomb_count += 1
         else: self.damage()
+
     #Função UPDATE, atualizada o tempo todo no Game Loop
     def update(self):
         self.invincible_timer()
@@ -302,25 +304,28 @@ def display_game_over():
     game_over_rect = game_over_surf.get_rect(center = (500, 288))
     screen.blit(game_over_surf, game_over_rect)
 
-
+#desenha YOU WIN na tela
 def display_you_win():
     text_font = pygame.font.Font(FONT_PATH, 60)
     you_win_surf = text_font.render('YOU WIN!', False, 'White')
     you_win_rect = you_win_surf.get_rect(center = (500, 80))
     screen.blit(you_win_surf, you_win_rect)
 
+#desenha NEW HIGHSCORE na tela
 def display_new_highscore():
     text_font = pygame.font.Font(FONT_PATH, 20)
     new_highscore_surf = text_font.render('NEW HIGHSCORE', False, 'White')
     new_highscore_rect = new_highscore_surf.get_rect(center = (500, 140))
     screen.blit(new_highscore_surf, new_highscore_rect)
 
+#Desenha o título na tela
 def display_title():
     text_font = pygame.font.Font(FONT_PATH, 50)
     title_surf = text_font.render('Os Labirintos da Unicamp', False, 'White')
     title_rect = title_surf.get_rect(center = (500, 188))
     screen.blit(title_surf, title_rect)
 
+#Desenha "Difficulty" na tela
 def display_difficulty():
     text_font = pygame.font.Font(FONT_PATH, 50)
     if game.difficulty == 3:
@@ -332,6 +337,7 @@ def display_difficulty():
     difficulty_rect = difficulty_surf.get_rect(center = (500, 288))
     screen.blit(difficulty_surf, difficulty_rect)
 
+#desenha a pergunta na tela
 def display_question(question: str):
     question_list = list(question.split())
     text_font = pygame.font.Font(FONT_PATH, 20)
