@@ -11,6 +11,7 @@ from game import Game
 from menus import MainMenu, PauseMenu, DifficultyMenu, GameOverMenu, LeaderboardMenu, QuestionMenu, NameMenu
 from leaderboard import Score, leaderboard
 from question import select_question
+from save import SaveData, load as load_save, clear as clear_save
 
 from Tile import Tile
 
@@ -387,6 +388,32 @@ def kill_bomb():
             set_explosion(bomb)
             pygame.sprite.Sprite.kill(bomb)
 
+def save():
+    prof_coords = [professor.coords for professor in game.professor_group.sprites()]
+    cmates_coords = [classmate.pos for classmate in game.classmate_group.sprites()]
+
+    bombs = game.inventory_slot.bomb_count
+
+    items: dict[str, list] = {}
+
+    for item in game.items.sprites():
+        if item.tag not in items:
+            items[item.tag] = [item.pos]
+        else:
+            items[item.tag].append(item.pos)
+
+    save = SaveData(user_text, game.map, player_class.coords, prof_coords, 
+                    cmates_coords, items, player_class.points, game.time,
+                    bombs, player_class.life, game.difficulty)
+
+    save.save()
+
+def save_load():
+    save = load_save()
+
+    game = Game(save.maze, False, False, False, False, save.difficulty, save.time, 1)
+    player_class = Player(save.life, save.score, save.player)
+
 SCREEN_WIDTH = 1000
 SCREEN_HIGHT = 775
 PLAYER_SPRITES_FOLDER = path.join('assets', 'images', 'player_sprites')
@@ -670,6 +697,7 @@ while True:
 
             #checa se o botão 'Quit' foi clicado
             elif pause_menu_class.quit_button.is_clicked:
+                save()
                 pygame.quit()
                 exit()
 
@@ -781,7 +809,7 @@ while True:
         user_text = ''
         while True:
             for event in pygame.event.get():
-                if event.type ==  pygame.QUIT:
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()   
 
