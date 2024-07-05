@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class MazeTemplate:
     size: tuple[int, int]
+    index: int
     entrance: tuple[int, int]
     exit: tuple[int, int]
     matrix: list[list[str]]
@@ -12,11 +13,17 @@ mazes: list[MazeTemplate] = []
 
 MAZE_FOLDER = os.path.join("assets", "mazes")
 
-for file in os.scandir(MAZE_FOLDER):
-    if not file.is_file():
-        continue
+index = 0
 
-    with open(file.path) as maze:
+while True:
+    index += 1
+
+    path = os.path.join(MAZE_FOLDER, f"maze{str(index)}.txt")
+
+    if not os.path.isfile(path):
+        break
+
+    with open(path) as maze:
         entry = None
         exit = None
 
@@ -34,4 +41,4 @@ for file in os.scandir(MAZE_FOLDER):
             matrix.append(line)
 
         size = (len(matrix[0]), len(matrix))
-        mazes.append(MazeTemplate(size, entry, exit, matrix))
+        mazes.append(MazeTemplate(size, index, entry, exit, matrix))
