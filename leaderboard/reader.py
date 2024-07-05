@@ -4,7 +4,7 @@ from io import TextIOWrapper
 
 LEADERBOARD_PATH = os.path.join("data", "leaderboard.yml")
 
-def read() -> dict[int, dict[str, dict]]:
+def read() -> dict[str, dict]:
     if not os.path.isfile(LEADERBOARD_PATH):
         return {}
 
@@ -16,24 +16,12 @@ def add(score: dict) -> bool:
 
     scores = read()
 
-    if not scores or len(scores) <= 0:
-        scores = { score["maze"]: { score["player"]: score } }
+    if score["player"] not in scores:
+        scores[score["player"]] = score
         is_high_score = True
-    elif score["maze"] not in scores:
-        scores[score["maze"]] = { score["player"]: score }
+    elif scores[score["player"]]["score"] < score["score"]:
+        scores[score["player"]] = score
         is_high_score = True
-    elif score["player"] not in scores[score["maze"]]:
-        scores[score["maze"]][score["player"]] = score
-        is_high_score = True
-    else:
-        curr_score = scores[score["maze"]][score["player"]]
-
-        new_score = (curr_score["score"], score["score"])
-        curr_score = (score["time"], curr_score["score"])
-
-        if new_score > curr_score:
-            scores[score["maze"]][score["player"]] = score
-            is_high_score = True
 
     if is_high_score:
         with open(LEADERBOARD_PATH, "w") as file:
